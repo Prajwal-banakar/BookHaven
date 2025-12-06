@@ -11,4 +11,6 @@ Search Book: In this function, we can search book information by using bookid an
 
 Book Info: This is special function in this application, In this function It will show book details with It's availability.
 
+Request book : users can request for books by book name and author name 
+
 In Book Inventory System, we have created one Controller class with name BookController by using @Controller Spring Annotations. This class is used for define the API end points to hit the API through the Web Browser. Here every API have different request types like GET, POST. It holds all the business logic and provide the output on the web page by using Thymeleaf Framework.

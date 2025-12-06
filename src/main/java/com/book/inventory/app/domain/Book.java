@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//Represents a book entity stored in the database.
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,7 +23,6 @@ public class Book {
     private String quantity;
     private String language;
 
-    // Transient fields are not persisted in the database
     @Transient
     private String total;
     @Transient
