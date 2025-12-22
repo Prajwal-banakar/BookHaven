@@ -2,6 +2,11 @@
 function createNavbar() {
     const navbar = document.createElement('nav');
     navbar.className = 'navbar navbar-expand-sm navbar-light p-3';
+
+    // Get CSRF token and header name from meta tags
+    const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+    const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+
     navbar.innerHTML = `
         <div class="container">
             <a class="navbar-brand" href="#"><i class="fas fa-book"></i> Book Inventory</a>
@@ -29,7 +34,16 @@ function createNavbar() {
                     <li class="nav-item">
                         <a class="nav-link" href="/contact"><i class="fas fa-envelope"></i> Contact</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
                 </ul>
+                <form id="logout-form" action="/logout" method="post" style="display: none;">
+                    <input type="hidden" name="${csrfHeader}" value="${csrfToken}"/>
+                    <input type="hidden" name="_csrf" value="${csrfToken}"/>
+                </form>
             </div>
         </div>
     `;
@@ -39,17 +53,20 @@ function createNavbar() {
 document.addEventListener("DOMContentLoaded", function() {
     const navbarContainer = document.getElementById('navbar-container');
     if (navbarContainer) {
-        navbarContainer.appendChild(createNavbar());
+        // Check if CSRF meta tags exist before creating navbar to avoid errors on pages without them (like login/register if they used this script)
+        if (document.querySelector("meta[name='_csrf']")) {
+            navbarContainer.appendChild(createNavbar());
 
-        // Highlight active link
-        const currentPath = window.location.pathname;
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            if (link.getAttribute('href') === currentPath) {
-                link.classList.add('active');
-            } else {
-                link.classList.remove('active');
-            }
-        });
+            // Highlight active link
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
     }
 });
