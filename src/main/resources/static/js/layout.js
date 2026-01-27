@@ -4,8 +4,11 @@ function createNavbar() {
     navbar.className = 'navbar navbar-expand-sm navbar-light p-3';
 
     // Get CSRF token and header name from meta tags
-    const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
-    const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+    const csrfMeta = document.querySelector("meta[name='_csrf']");
+    const csrfHeaderMeta = document.querySelector("meta[name='_csrf_header']");
+
+    const csrfToken = csrfMeta ? csrfMeta.getAttribute("content") : "";
+    const csrfHeader = csrfHeaderMeta ? csrfHeaderMeta.getAttribute("content") : "";
 
     navbar.innerHTML = `
         <div class="container">
@@ -53,7 +56,12 @@ function createNavbar() {
 document.addEventListener("DOMContentLoaded", function() {
     const navbarContainer = document.getElementById('navbar-container');
     if (navbarContainer) {
-        // Check if CSRF meta tags exist before creating navbar to avoid errors on pages without them (like login/register if they used this script)
+        // Prevent duplicate navbars
+        if (navbarContainer.children.length > 0) {
+            return;
+        }
+
+        // Check if CSRF meta tags exist before creating navbar
         if (document.querySelector("meta[name='_csrf']")) {
             navbarContainer.appendChild(createNavbar());
 
