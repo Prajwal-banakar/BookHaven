@@ -52,4 +52,23 @@ public class AuthRestController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @PutMapping("/api/auth/profile")
+    public ResponseEntity<?> updateUserProfile(@RequestBody User updatedUser) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepo.findByUsername(username);
+        
+        if (user != null) {
+            user.setFullName(updatedUser.getFullName());
+            user.setEmail(updatedUser.getEmail());
+            user.setPhoneNumber(updatedUser.getPhoneNumber());
+            user.setAddress(updatedUser.getAddress());
+            
+            userRepo.save(user);
+            user.setPassword(null);
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
