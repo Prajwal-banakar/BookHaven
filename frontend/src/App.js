@@ -8,6 +8,7 @@ import AddBook from './components/AddBook';
 import BookList from './components/BookList';
 import SearchBook from './components/SearchBook';
 import DeleteBook from './components/DeleteBook';
+import Profile from './components/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -25,6 +26,7 @@ function App() {
             <Route path="/add" element={<ProtectedRoute><AddBook /></ProtectedRoute>} />
             <Route path="/search" element={<ProtectedRoute><SearchBook /></ProtectedRoute>} />
             <Route path="/delete" element={<ProtectedRoute><DeleteBook /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           </Routes>
         </div>
       </Router>

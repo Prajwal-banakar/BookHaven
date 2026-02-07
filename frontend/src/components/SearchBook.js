@@ -52,7 +52,7 @@ const SearchBook = () => {
                 <p><strong>Year:</strong> {book.publicationYear}</p>
               </div>
               <div className="col-md-6">
-                <p><strong>Price:</strong> ${book.price}</p>
+                <p><strong>Price:</strong> ₹{book.price}</p>
                 <p><strong>Quantity:</strong> {book.quantity}</p>
                 <p><strong>Language:</strong> {book.language}</p>
               </div>

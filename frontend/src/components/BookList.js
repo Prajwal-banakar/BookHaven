@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
@@ -18,32 +18,75 @@ const BookList = () => {
     }
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div>
-      <h2 className="mb-4">Book List</h2>
+    <motion.div
+      initial="hidden"
+      animate="show"
+      variants={container}
+    >
+      <h2 className="mb-4 fw-bold" style={{color: '#4e54c8'}}>Book List</h2>
       <div className="row">
         {books.map(book => (
-          <div className="col-md-4 mb-4" key={book.bookid}>
+          <motion.div
+            className="col-md-4 mb-4"
+            key={book.bookid}
+            variants={item}
+          >
             <div className="card h-100">
               <div className="card-body">
-                <h5 className="card-title">{book.title}</h5>
-                <h6 className="card-subtitle mb-2 text-muted">{book.author}</h6>
-                <p className="card-text">
-                  <strong>Publisher:</strong> {book.publisher}<br/>
-                  <strong>Year:</strong> {book.publicationYear}<br/>
-                  <strong>Price:</strong> ${book.price}<br/>
-                  <strong>Language:</strong> {book.language}
-                </p>
+                <h5 className="card-title fw-bold">{book.title}</h5>
+                <h6 className="card-subtitle mb-3 text-muted">{book.author}</h6>
+                <div className="card-text">
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Publisher:</span>
+                    <span className="fw-medium">{book.publisher}</span>
+                  </div>
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Year:</span>
+                    <span className="fw-medium">{book.publicationYear}</span>
+                  </div>
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Price:</span>
+                    <span className="fw-bold text-success">₹{book.price}</span>
+                  </div>
+                  <div className="d-flex justify-content-between">
+                    <span>Language:</span>
+                    <span className="badge bg-secondary">{book.language}</span>
+                  </div>
+                </div>
               </div>
-              <div className="card-footer bg-transparent">
+              <div className="card-footer bg-transparent border-top-0 text-end">
                 <small className="text-muted">ID: {book.bookid}</small>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
-      {books.length === 0 && <div className="alert alert-info">No books found.</div>}
-    </div>
+      {books.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="alert alert-info"
+        >
+          No books found. Start by adding some!
+        </motion.div>
+      )}
+    </motion.div>
   );
 };
 
