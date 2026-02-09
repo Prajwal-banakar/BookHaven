@@ -13,10 +13,8 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      // We can add an endpoint to check current user, for now we rely on login state
-      // or we can try to fetch a protected resource
-      await axios.get('/api/books');
-      setUser({ name: 'User' }); // Simplified
+      const response = await axios.get('/api/auth/profile');
+      setUser(response.data);
     } catch (error) {
       setUser(null);
     } finally {
@@ -32,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     await axios.post('/api/auth/login', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
-    setUser({ username });
+    await checkAuthStatus(); // Fetch full profile including role
   };
 
   const logout = async () => {
