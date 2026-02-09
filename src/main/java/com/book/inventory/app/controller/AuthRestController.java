@@ -31,7 +31,14 @@ public class AuthRestController {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
-        user.setRole("USER");
+        
+        // Auto-assign ADMIN role if username contains "admin" (case-insensitive)
+        if (username.toLowerCase().contains("admin")) {
+            user.setRole("ADMIN");
+        } else {
+            user.setRole("USER");
+        }
+
         user.setFullName(fullName);
         user.setEmail(email);
         user.setPhoneNumber(phoneNumber);

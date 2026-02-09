@@ -4,6 +4,7 @@ import com.book.inventory.app.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -29,14 +30,22 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable()) // Disable CSRF for REST API simplicity in this demo
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/auth/**", "/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers("/api/books/**").authenticated() // Protect API
-                .anyRequest().permitAll() // Allow frontend to load
+                // Admin only endpoints
+                .requestMatchers(HttpMethod.POST, "/api/books").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/books/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole("ADMIN")
+                .requestMatchers("/api/orders/all").hasRole("ADMIN")
+                .requestMatchers("/api/orders/*/status").hasRole("ADMIN")
+                // Authenticated users
+                .requestMatchers("/api/books/**").authenticated()
+                .requestMatchers("/api/orders/**").authenticated()
+                .anyRequest().permitAll()
             )
             .formLogin(form -> form
-                .loginPage("http://localhost:3000/login") // Redirect to React login
+                .loginPage("http://localhost:3000/login")
                 .loginProcessingUrl("/api/auth/login")
                 .successHandler((request, response, authentication) -> {
                     response.setStatus(200);

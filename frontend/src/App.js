@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Login from './components/Login';
@@ -9,6 +9,8 @@ import BookList from './components/BookList';
 import SearchBook from './components/SearchBook';
 import DeleteBook from './components/DeleteBook';
 import Profile from './components/Profile';
+import UserOrders from './components/UserOrders';
+import AdminDashboard from './components/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -27,6 +29,8 @@ function App() {
             <Route path="/search" element={<ProtectedRoute><SearchBook /></ProtectedRoute>} />
             <Route path="/delete" element={<ProtectedRoute><DeleteBook /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/orders" element={<ProtectedRoute><UserOrders /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           </Routes>
         </div>
       </Router>
