@@ -37,12 +37,13 @@ const AdminDashboard = () => {
       <div className="card shadow-sm">
         <div className="card-body p-0">
           <div className="table-responsive">
-            <table className="table table-hover mb-0">
+            <table className="table table-hover mb-0 align-middle">
               <thead className="bg-light">
                 <tr>
                   <th className="p-3">Order ID</th>
                   <th className="p-3">User</th>
-                  <th className="p-3">Book</th>
+                  <th className="p-3">Items</th>
+                  <th className="p-3">Total</th>
                   <th className="p-3">Date</th>
                   <th className="p-3">Status</th>
                   <th className="p-3">Actions</th>
@@ -51,12 +52,23 @@ const AdminDashboard = () => {
               <tbody>
                 {orders.map(order => (
                   <tr key={order.id}>
-                    <td className="p-3"><small className="text-muted">{order.id}</small></td>
+                    <td className="p-3"><small className="text-muted">#{order.id.substring(0, 8)}</small></td>
                     <td className="p-3">{order.username}</td>
-                    <td className="p-3 fw-medium">{order.bookTitle}</td>
+                    <td className="p-3">
+                      {order.items && order.items.map((item, index) => (
+                        <div key={index} className="small">
+                          <span className="fw-medium">{item.title}</span>
+                          <span className="text-muted ms-1">({item.quantity})</span>
+                        </div>
+                      ))}
+                      {!order.items && order.bookTitle && (
+                        <div className="fw-medium">{order.bookTitle}</div>
+                      )}
+                    </td>
+                    <td className="p-3 fw-bold">₹{order.totalPrice || order.price}</td>
                     <td className="p-3">{new Date(order.orderDate).toLocaleDateString()}</td>
                     <td className="p-3">
-                      <span className={`badge bg-${order.status === 'PENDING' ? 'warning' : order.status === 'DELIVERED' ? 'success' : 'secondary'}`}>
+                      <span className={`badge bg-${order.status === 'PENDING' ? 'warning' : order.status === 'APPROVED' ? 'info' : order.status === 'DELIVERED' ? 'success' : 'secondary'}`}>
                         {order.status}
                       </span>
                     </td>

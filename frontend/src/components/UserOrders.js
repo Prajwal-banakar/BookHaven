@@ -28,25 +28,36 @@ const UserOrders = () => {
       <div className="card shadow-sm">
         <div className="card-body p-0">
           <div className="table-responsive">
-            <table className="table table-hover mb-0">
+            <table className="table table-hover mb-0 align-middle">
               <thead className="bg-light">
                 <tr>
                   <th className="p-3">Order ID</th>
-                  <th className="p-3">Book Title</th>
+                  <th className="p-3">Items</th>
                   <th className="p-3">Date</th>
-                  <th className="p-3">Price</th>
+                  <th className="p-3">Total Price</th>
                   <th className="p-3">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.map(order => (
                   <tr key={order.id}>
-                    <td className="p-3"><small className="text-muted">{order.id}</small></td>
-                    <td className="p-3 fw-medium">{order.bookTitle}</td>
-                    <td className="p-3">{new Date(order.orderDate).toLocaleDateString()}</td>
-                    <td className="p-3">₹{order.price}</td>
+                    <td className="p-3"><small className="text-muted">#{order.id.substring(0, 8)}</small></td>
                     <td className="p-3">
-                      <span className={`badge bg-${order.status === 'PENDING' ? 'warning' : 'success'}`}>
+                      {order.items && order.items.map((item, index) => (
+                        <div key={index} className="mb-1">
+                          <span className="fw-medium">{item.title}</span>
+                          <span className="text-muted ms-2">x{item.quantity}</span>
+                        </div>
+                      ))}
+                      {!order.items && order.bookTitle && (
+                        // Fallback for old single-item orders
+                        <div className="fw-medium">{order.bookTitle}</div>
+                      )}
+                    </td>
+                    <td className="p-3">{new Date(order.orderDate).toLocaleDateString()}</td>
+                    <td className="p-3 fw-bold text-success">₹{order.totalPrice || order.price}</td>
+                    <td className="p-3">
+                      <span className={`badge bg-${order.status === 'PENDING' ? 'warning' : order.status === 'APPROVED' ? 'info' : order.status === 'DELIVERED' ? 'success' : 'secondary'}`}>
                         {order.status}
                       </span>
                     </td>

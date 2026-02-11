@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaBook, FaUserCircle, FaSignOutAlt, FaClipboardList, FaCog } from 'react-icons/fa';
+import { useCart } from '../context/CartContext';
+import { FaBook, FaUserCircle, FaSignOutAlt, FaClipboardList, FaCog, FaShoppingCart } from 'react-icons/fa';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { cart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -17,6 +19,7 @@ const Navbar = () => {
 
   const isActive = (path) => location.pathname === path ? 'active fw-bold' : '';
   const isAdmin = user.role === 'ADMIN';
+  const cartItemCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark">
@@ -61,6 +64,17 @@ const Navbar = () => {
           </ul>
 
           <div className="d-flex align-items-center gap-3 text-white">
+            {!isAdmin && (
+              <Link to="/cart" className="text-decoration-none text-white position-relative me-2">
+                <FaShoppingCart size={20} />
+                {cartItemCount > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {cartItemCount}
+                  </span>
+                )}
+              </Link>
+            )}
+
             <Link to="/profile" className="text-decoration-none text-white">
               <div className="d-flex align-items-center gap-2 bg-white bg-opacity-10 px-3 py-1 rounded-pill" style={{cursor: 'pointer'}}>
                 <FaUserCircle size={20} />

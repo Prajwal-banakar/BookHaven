@@ -1,66 +1,100 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
+import { FaSearch, FaBook } from 'react-icons/fa';
 
 const SearchBook = () => {
-  const [bookId, setBookId] = useState('');
-  const [book, setBook] = useState(null);
+  const [title, setTitle] = useState('');
+  const [books, setBooks] = useState([]);
   const [error, setError] = useState('');
+  const [searched, setSearched] = useState(false);
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    if (!title.trim()) return;
+
     try {
-      const response = await axios.get(`/api/books/${bookId}`);
-      setBook(response.data);
+      const response = await axios.get(`/api/books/search?title=${title}`);
+      setBooks(response.data);
+      setSearched(true);
       setError('');
     } catch (err) {
-      setBook(null);
-      setError('Book not found');
+      setBooks([]);
+      setError('Failed to search books');
     }
   };
 
   return (
-    <div className="col-md-8 offset-md-2">
-      <div className="card mb-4">
-        <div className="card-header">
-          <h3>Search Book</h3>
+    <motion.div
+      className="col-md-8 offset-md-2 mt-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      <div className="card mb-4 shadow-sm border-0">
+        <div className="card-header bg-white p-4 border-0">
+          <h3 className="fw-bold" style={{color: '#4e54c8'}}>Search Book</h3>
+          <p className="text-muted">Find books by their title</p>
         </div>
-        <div className="card-body">
+        <div className="card-body p-4 pt-0">
           <form onSubmit={handleSearch} className="d-flex gap-2">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter Book ID"
-              value={bookId}
-              onChange={(e) => setBookId(e.target.value)}
-              required
-            />
-            <button type="submit" className="btn btn-primary">Search</button>
+            <div className="input-group input-group-lg">
+              <span className="input-group-text bg-light border-end-0">
+                <FaSearch className="text-muted" />
+              </span>
+              <input
+                type="text"
+                className="form-control bg-light border-start-0"
+                placeholder="Enter Book Title (e.g., Harry Potter)"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+              <button type="submit" className="btn btn-primary px-4 fw-bold">Search</button>
+            </div>
           </form>
         </div>
       </div>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
-      {book && (
-        <div className="card">
-          <div className="card-body">
-            <h4 className="card-title">{book.title}</h4>
-            <div className="row mt-3">
-              <div className="col-md-6">
-                <p><strong>Author:</strong> {book.author}</p>
-                <p><strong>Publisher:</strong> {book.publisher}</p>
-                <p><strong>Year:</strong> {book.publicationYear}</p>
-              </div>
-              <div className="col-md-6">
-                <p><strong>Price:</strong> ₹{book.price}</p>
-                <p><strong>Quantity:</strong> {book.quantity}</p>
-                <p><strong>Language:</strong> {book.language}</p>
+      {searched && books.length === 0 && !error && (
+        <div className="alert alert-info text-center">No books found matching "{title}"</div>
+      )}
+
+      <div className="row g-4">
+        {books.map(book => (
+          <motion.div
+            key={book.bookid}
+            className="col-md-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <div className="card shadow-sm border-0 h-100">
+              <div className="card-body d-flex align-items-center gap-4">
+                <div className="bg-light p-3 rounded-3 text-primary">
+                  <FaBook size={30} />
+                </div>
+                <div className="flex-grow-1">
+                  <h4 className="card-title fw-bold mb-1">{book.title}</h4>
+                  <p className="text-muted mb-2">by {book.author}</p>
+                  <div className="d-flex gap-3 text-sm">
+                    <span className="badge bg-light text-dark border">ID: {book.bookid}</span>
+                    <span className="badge bg-light text-dark border">{book.publisher}</span>
+                    <span className="badge bg-light text-dark border">{book.publicationYear}</span>
+                  </div>
+                </div>
+                <div className="text-end">
+                  <h3 className="fw-bold text-success mb-0">₹{book.price}</h3>
+                  <small className={`text-${book.quantity > 0 ? 'success' : 'danger'}`}>
+                    {book.quantity > 0 ? 'In Stock' : 'Out of Stock'}
+                  </small>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-    </div>
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
   );
 };
 

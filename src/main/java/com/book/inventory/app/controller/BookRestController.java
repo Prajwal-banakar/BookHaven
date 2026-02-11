@@ -30,6 +30,11 @@ public class BookRestController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/search")
+    public List<Book> searchBooks(@RequestParam String title) {
+        return repo.findByTitleContainingIgnoreCase(title);
+    }
+
     @PostMapping
     public Book addBook(@RequestBody Book book) {
         return repo.save(book);

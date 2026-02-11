@@ -1,9 +1,12 @@
 package com.book.inventory.app.controller;
 
 import com.book.inventory.app.domain.Order;
+import com.book.inventory.app.domain.Cart;
+import com.book.inventory.app.domain.CartItem;
 import com.book.inventory.app.domain.Book;
 import com.book.inventory.app.repo.OrderRepo;
 import com.book.inventory.app.repo.BookRepo;
+import com.book.inventory.app.repo.CartRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -22,37 +26,55 @@ public class OrderRestController {
 
     @Autowired
     private BookRepo bookRepo;
+    
+    @Autowired
+    private CartRepo cartRepo;
 
-    // User: Place an order
-    @PostMapping
-    public ResponseEntity<?> placeOrder(@RequestBody Order orderRequest) {
+    // Checkout from Cart
+    @PostMapping("/checkout")
+    public ResponseEntity<?> checkout(@RequestBody Order paymentDetails) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-
-        Book book = bookRepo.findByBookid(orderRequest.getBookId());
-        if (book == null) {
-            return ResponseEntity.badRequest().body("Book not found");
+        
+        Cart cart = cartRepo.findByUsername(username);
+        if (cart == null || cart.getItems().isEmpty()) {
+            return ResponseEntity.badRequest().body("Cart is empty");
         }
-        if (Integer.parseInt(book.getQuantity()) <= 0) {
-            return ResponseEntity.badRequest().body("Book out of stock");
+
+        // Validate Stock
+        for (CartItem item : cart.getItems()) {
+            Book book = bookRepo.findByBookid(item.getBookId());
+            if (book == null || Integer.parseInt(book.getQuantity()) < item.getQuantity()) {
+                return ResponseEntity.badRequest().body("Not enough stock for: " + item.getTitle());
+            }
+        }
+
+        // Deduct Stock
+        for (CartItem item : cart.getItems()) {
+            Book book = bookRepo.findByBookid(item.getBookId());
+            int newQuantity = Integer.parseInt(book.getQuantity()) - item.getQuantity();
+            book.setQuantity(String.valueOf(newQuantity));
+            bookRepo.save(book);
         }
 
         // Create Order
         Order order = new Order();
-        order.setBookId(book.getBookid());
-        order.setBookTitle(book.getTitle());
         order.setUsername(username);
-        order.setPrice(book.getPrice());
-        order.setStatus("PENDING");
+        order.setItems(cart.getItems());
+        order.setTotalPrice(cart.getTotalPrice());
+        order.setStatus("PENDING"); // Changed from APPROVED to PENDING
         order.setOrderDate(LocalDateTime.now());
-        
-        // Decrease quantity
-        int newQuantity = Integer.parseInt(book.getQuantity()) - 1;
-        book.setQuantity(String.valueOf(newQuantity));
-        bookRepo.save(book);
+        order.setPaymentMethod(paymentDetails.getPaymentMethod());
+        order.setTransactionId(UUID.randomUUID().toString());
 
         orderRepo.save(order);
-        return ResponseEntity.ok("Order placed successfully");
+
+        // Clear Cart
+        cart.getItems().clear();
+        cart.setTotalPrice(0);
+        cartRepo.save(cart);
+
+        return ResponseEntity.ok(order);
     }
 
     // User: Get my orders

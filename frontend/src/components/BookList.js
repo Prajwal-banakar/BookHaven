@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { FaShoppingCart, FaEdit, FaTrash } from 'react-icons/fa';
+import { useCart } from '../context/CartContext';
+import { FaShoppingCart, FaEdit, FaTrash, FaCartPlus } from 'react-icons/fa';
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
   const { user } = useAuth();
+  const { addToCart } = useCart();
   const isAdmin = user?.role === 'ADMIN';
 
   useEffect(() => {
@@ -22,13 +24,10 @@ const BookList = () => {
     }
   };
 
-  const handleOrder = async (bookId) => {
-    try {
-      await axios.post('/api/orders', { bookId });
-      alert('Order placed successfully!');
-      fetchBooks(); // Refresh to update quantity
-    } catch (error) {
-      alert('Failed to place order: ' + (error.response?.data || error.message));
+  const handleAddToCart = async (bookId) => {
+    const success = await addToCart(bookId);
+    if (success) {
+      // Optional: Show toast
     }
   };
 
@@ -116,10 +115,10 @@ const BookList = () => {
                 ) : (
                   <button
                     className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
-                    onClick={() => handleOrder(book.bookid)}
+                    onClick={() => handleAddToCart(book.bookid)}
                     disabled={book.quantity <= 0}
                   >
-                    <FaShoppingCart /> {book.quantity > 0 ? 'Order Now' : 'Unavailable'}
+                    <FaCartPlus /> {book.quantity > 0 ? 'Add to Cart' : 'Unavailable'}
                   </button>
                 )}
               </div>
