@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { FaEnvelope } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -33,8 +35,17 @@ const AdminDashboard = () => {
       animate={{ opacity: 1 }}
       className="col-md-12"
     >
-      <h2 className="mb-4 fw-bold" style={{color: '#4e54c8'}}>Admin Dashboard - Manage Orders</h2>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="fw-bold mb-0" style={{color: '#4e54c8'}}>Admin Dashboard</h2>
+        <Link to="/admin/messages" className="btn btn-outline-primary d-flex align-items-center gap-2">
+          <FaEnvelope /> View Messages
+        </Link>
+      </div>
+
       <div className="card shadow-sm">
+        <div className="card-header bg-white py-3">
+          <h5 className="mb-0 fw-bold">Manage Orders</h5>
+        </div>
         <div className="card-body p-0">
           <div className="table-responsive">
             <table className="table table-hover mb-0 align-middle">

@@ -2,10 +2,10 @@
 
 :root {
   /* Vibrant Palette */
-  --primary: #6366f1;       /* Indigo */
+  --primary: #4f46e5;       /* Indigo 600 */
   --primary-dark: #4338ca;
-  --secondary: #ec4899;     /* Pink */
-  --accent: #8b5cf6;        /* Violet */
+  --secondary: #ec4899;     /* Pink 500 */
+  --accent: #8b5cf6;        /* Violet 500 */
 
   /* Functional Colors */
   --success: #10b981;
@@ -14,34 +14,28 @@
   --info: #0ea5e9;
 
   /* Backgrounds */
-  --bg-body: #f0f9ff;       /* Very light blue tint */
+  --bg-body: #f8fafc;       /* Slate 50 */
   --bg-card: #ffffff;
 
   /* Text */
-  --text-main: #1e293b;
-  --text-muted: #64748b;
-  --text-light: #f8fafc;
+  --text-main: #0f172a;     /* Slate 900 */
+  --text-muted: #64748b;    /* Slate 500 */
+  --text-light: #f1f5f9;
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  /* Colorful Mesh Gradient Background */
-  background-color: #f3f4f6;
-  background-image:
-    radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%),
-    radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
-  background-size: 100% 100vh;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  /* Soft, Professional Gradient Background */
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
   color: var(--text-main);
   min-height: 100vh;
+  line-height: 1.6;
 }
 
 /* Navbar - Colorful & Glassy */
 .navbar {
   background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.2);
   padding: 1rem 0;
   border: none;
 }
@@ -69,34 +63,31 @@ body {
 
 /* Hero Section */
 .hero-section {
-  /* Transparent to let body gradient show through, or specific hero gradient */
   background: transparent;
-  color: white;
-  padding: 100px 0;
+  color: var(--text-main); /* Changed to dark text for light bg */
+  padding: 80px 0;
   text-align: center;
 }
 
 .hero-search {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: none;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  background: white;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-/* Cards - Floating & Colorful */
+/* Cards - Clean & Professional */
 .card {
   border: none;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
   overflow: hidden;
 }
 
 .card:hover {
-  transform: translateY(-8px) scale(1.01);
-  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
@@ -106,19 +97,20 @@ body {
   color: var(--primary);
 }
 
-/* Feature Cards with Colorful Accents */
+/* Feature Cards */
 .feature-card {
   background: white;
   padding: 2rem;
-  border-radius: 20px;
-  border-top: 5px solid var(--primary); /* Default color */
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  border-radius: 16px;
+  border-top: 4px solid var(--primary);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   height: 100%;
   transition: all 0.3s ease;
 }
 
 .feature-card:hover {
-  background: linear-gradient(to bottom right, #ffffff, #f0f9ff);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 /* Stat Cards */
@@ -126,8 +118,7 @@ body {
   background: white;
   padding: 1.5rem;
   border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  border-left: none; /* Remove old style */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   position: relative;
   overflow: hidden;
 }
@@ -149,31 +140,34 @@ body {
   border-radius: 50px;
   padding: 0.8rem 2rem;
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
 }
 
 .btn-primary:hover {
   background: linear-gradient(135deg, var(--accent), var(--primary));
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+  box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
 }
 
 /* Inputs */
 .form-control {
   border-radius: 12px;
-  border: 2px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   padding: 0.8rem 1.2rem;
 }
 
 .form-control:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
 }
 
-/* Badges */
-.badge {
-  padding: 0.6em 1em;
-  border-radius: 30px;
+/* Contact Section */
+.contact-section {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+  padding: 3rem;
+  margin-top: 4rem;
 }
 
 /* Custom Scrollbar */
@@ -181,9 +175,9 @@ body {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #1e1b4b;
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(var(--primary), var(--secondary));
+  background: #cbd5e1;
   border-radius: 5px;
 }

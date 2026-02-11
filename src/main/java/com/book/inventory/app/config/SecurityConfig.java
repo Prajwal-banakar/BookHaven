@@ -33,6 +33,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/auth/**", "/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
+                // Contact endpoints
+                .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/contact/all").hasRole("ADMIN")
                 // Admin only endpoints
                 .requestMatchers(HttpMethod.POST, "/api/books").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/books/**").hasRole("ADMIN")

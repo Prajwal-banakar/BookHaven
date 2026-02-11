@@ -11,6 +11,7 @@ import DeleteBook from './components/DeleteBook';
 import Profile from './components/Profile';
 import UserOrders from './components/UserOrders';
 import AdminDashboard from './components/AdminDashboard';
+import AdminMessages from './components/AdminMessages';
 import Cart from './components/Cart';
 import Checkout from './components/Checkout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -35,6 +36,7 @@ function App() {
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/orders" element={<ProtectedRoute><UserOrders /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+              <Route path="/admin/messages" element={<ProtectedRoute><AdminMessages /></ProtectedRoute>} />
               <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
               <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             </Routes>
