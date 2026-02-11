@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { FaSearch, FaBook } from 'react-icons/fa';
+import { useSearchParams } from 'react-router-dom';
 
 const SearchBook = () => {
-  const [title, setTitle] = useState('');
+  const [searchParams] = useSearchParams();
+  const [title, setTitle] = useState(searchParams.get('q') || '');
   const [books, setBooks] = useState([]);
   const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!title.trim()) return;
+  useEffect(() => {
+    const query = searchParams.get('q');
+    if (query) {
+      setTitle(query);
+      performSearch(query);
+    }
+  }, [searchParams]);
+
+  const performSearch = async (searchTitle) => {
+    if (!searchTitle.trim()) return;
 
     try {
-      const response = await axios.get(`/api/books/search?title=${title}`);
+      const response = await axios.get(`/api/books/search?title=${searchTitle}`);
       setBooks(response.data);
       setSearched(true);
       setError('');
@@ -22,6 +31,11 @@ const SearchBook = () => {
       setBooks([]);
       setError('Failed to search books');
     }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    performSearch(title);
   };
 
   return (
