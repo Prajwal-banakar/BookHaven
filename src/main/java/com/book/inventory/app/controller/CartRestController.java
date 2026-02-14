@@ -76,6 +76,28 @@ public class CartRestController {
         return ResponseEntity.ok(cart);
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<?> updateQuantity(@RequestBody CartItem request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Cart cart = getOrCreateCart(auth.getName());
+        
+        Optional<CartItem> existingItem = cart.getItems().stream()
+                .filter(item -> item.getBookId().equals(request.getBookId()))
+                .findFirst();
+
+        if (existingItem.isPresent()) {
+            if (request.getQuantity() > 0) {
+                existingItem.get().setQuantity(request.getQuantity());
+            } else {
+                cart.getItems().remove(existingItem.get());
+            }
+            calculateTotal(cart);
+            cartRepo.save(cart);
+            return ResponseEntity.ok(cart);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @DeleteMapping("/remove/{bookId}")
     public ResponseEntity<Cart> removeFromCart(@PathVariable String bookId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

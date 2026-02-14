@@ -2,10 +2,10 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { motion } from 'framer-motion';
-import { FaTrash, FaArrowRight } from 'react-icons/fa';
+import { FaTrash, FaArrowRight, FaMinus, FaPlus } from 'react-icons/fa';
 
 const Cart = () => {
-  const { cart, removeFromCart, clearCart } = useCart();
+  const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
   const navigate = useNavigate();
 
   if (!cart.items || cart.items.length === 0) {
@@ -45,7 +45,25 @@ const Cart = () => {
                       <small className="text-muted">{item.author}</small>
                     </td>
                     <td className="p-3">₹{item.price}</td>
-                    <td className="p-3">{item.quantity}</td>
+                    <td className="p-3">
+                      <div className="d-flex align-items-center gap-2">
+                        <button
+                          className="btn btn-sm btn-outline-secondary rounded-circle p-1 d-flex align-items-center justify-content-center"
+                          style={{width: '24px', height: '24px'}}
+                          onClick={() => updateQuantity(item.bookId, item.quantity - 1)}
+                        >
+                          <FaMinus size={10} />
+                        </button>
+                        <span className="fw-medium" style={{minWidth: '20px', textAlign: 'center'}}>{item.quantity}</span>
+                        <button
+                          className="btn btn-sm btn-outline-secondary rounded-circle p-1 d-flex align-items-center justify-content-center"
+                          style={{width: '24px', height: '24px'}}
+                          onClick={() => updateQuantity(item.bookId, item.quantity + 1)}
+                        >
+                          <FaPlus size={10} />
+                        </button>
+                      </div>
+                    </td>
                     <td className="p-3 fw-bold">₹{item.price * item.quantity}</td>
                     <td className="p-3">
                       <button

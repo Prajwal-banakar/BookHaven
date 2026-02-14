@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { FaShoppingCart, FaEdit, FaTrash, FaCartPlus } from 'react-icons/fa';
+import { FaShoppingCart, FaEdit, FaTrash, FaCartPlus, FaCheckCircle } from 'react-icons/fa';
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
   const { user } = useAuth();
   const { addToCart } = useCart();
   const isAdmin = user?.role === 'ADMIN';
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     fetchBooks();
@@ -27,7 +28,8 @@ const BookList = () => {
   const handleAddToCart = async (bookId) => {
     const success = await addToCart(bookId);
     if (success) {
-      // Optional: Show toast
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     }
   };
 
@@ -61,7 +63,23 @@ const BookList = () => {
       initial="hidden"
       animate="show"
       variants={container}
+      className="position-relative"
     >
+      {/* Success Toast */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: -50, x: '-50%' }}
+            animate={{ opacity: 1, y: 20, x: '-50%' }}
+            exit={{ opacity: 0, y: -50, x: '-50%' }}
+            className="position-fixed top-0 start-50 bg-success text-white px-4 py-2 rounded-pill shadow-lg d-flex align-items-center gap-2"
+            style={{ zIndex: 1050 }}
+          >
+            <FaCheckCircle /> Added to Cart Successfully!
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <h2 className="mb-4 fw-bold" style={{color: '#4e54c8'}}>Book List</h2>
       <div className="row">
         {books.map(book => (

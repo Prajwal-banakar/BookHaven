@@ -31,8 +31,16 @@ export const CartProvider = ({ children }) => {
       setCart(response.data);
       return true;
     } catch (error) {
-      alert('Failed to add to cart');
       return false;
+    }
+  };
+
+  const updateQuantity = async (bookId, quantity) => {
+    try {
+      const response = await axios.put('/api/cart/update', { bookId, quantity });
+      setCart(response.data);
+    } catch (error) {
+      console.error('Error updating quantity', error);
     }
   };
 
@@ -55,7 +63,7 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, fetchCart }}>
+    <CartContext.Provider value={{ cart, addToCart, updateQuantity, removeFromCart, clearCart, fetchCart }}>
       {children}
     </CartContext.Provider>
   );

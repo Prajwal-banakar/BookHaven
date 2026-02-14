@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { FaBook, FaUserCircle, FaSignOutAlt, FaClipboardList, FaCog, FaShoppingCart } from 'react-icons/fa';
+import { FaBookOpen, FaUserCircle, FaSignOutAlt, FaClipboardList, FaCog, FaShoppingCart } from 'react-icons/fa';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -25,7 +25,7 @@ const Navbar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark">
       <div className="container">
         <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
-          <FaBook /> Book Inventory
+          <FaBookOpen /> BookHaven
         </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span className="navbar-toggler-icon"></span>
@@ -36,7 +36,7 @@ const Navbar = () => {
               <Link className={`nav-link ${isActive('/')}`} to="/">Home</Link>
             </li>
             <li className="nav-item">
-              <Link className={`nav-link ${isActive('/books')}`} to="/books">Books</Link>
+              <Link className={`nav-link ${isActive('/books')}`} to="/books">Browse</Link>
             </li>
 
             {isAdmin ? (
@@ -46,14 +46,14 @@ const Navbar = () => {
                 </li>
                 <li className="nav-item">
                   <Link className={`nav-link ${isActive('/admin')}`} to="/admin">
-                    <FaCog className="me-1" /> Admin Dashboard
+                    <FaCog className="me-1" /> Dashboard
                   </Link>
                 </li>
               </>
             ) : (
               <li className="nav-item">
                 <Link className={`nav-link ${isActive('/orders')}`} to="/orders">
-                  <FaClipboardList className="me-1" /> My Orders
+                  <FaClipboardList className="me-1" /> Orders
                 </Link>
               </li>
             )}

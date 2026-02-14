@@ -53,27 +53,27 @@ const Home = () => {
       <section className="hero-section text-center d-flex flex-column justify-content-center align-items-center">
         <div className="container">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h1 className="display-4 fw-bold mb-3" style={{color: '#1e293b'}}>
-              Central Library <span style={{color: '#4f46e5'}}>Management System</span>
+            <h1 className="hero-title mb-3">
+              Welcome to <span style={{color: '#4f46e5'}}>BookHaven</span>
             </h1>
-            <p className="lead mb-5 text-muted">
-              Your gateway to knowledge. Search, borrow, and manage books seamlessly.
+            <p className="lead mb-5 text-muted fs-4">
+              Your premier destination for books. Discover, read, and collect your favorites.
             </p>
 
             <form onSubmit={handleSearch} className="d-flex justify-content-center w-100">
-              <div className="input-group shadow-lg rounded-pill overflow-hidden" style={{ maxWidth: '600px' }}>
+              <div className="input-group hero-search rounded-pill overflow-hidden" style={{ maxWidth: '650px' }}>
                 <input
                   type="text"
-                  className="form-control form-control-lg border-0 px-4"
+                  className="form-control form-control-lg border-0 px-4 bg-transparent"
                   placeholder="Search by title, author, or ISBN..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button className="btn btn-primary px-4" type="submit">
+                <button className="btn btn-primary px-5 rounded-end-pill" type="submit">
                   <FaSearch /> Search
                 </button>
               </div>
@@ -84,50 +84,67 @@ const Home = () => {
 
       {/* 2. Quick Stats */}
       {user && (
-        <section className="container mt-n5 position-relative" style={{ zIndex: 10, marginTop: '-30px' }}>
+        <section className="container mt-n5 position-relative" style={{ zIndex: 10, marginTop: '-40px' }}>
           <div className="row g-4">
-            <div className="col-md-4">
-              <div className="stat-card d-flex align-items-center gap-3">
-                <div className="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
-                  <FaBook size={24} />
+            <motion.div
+              className="col-md-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="stat-card d-flex align-items-center gap-4">
+                <div className="bg-primary bg-opacity-10 p-4 rounded-circle text-primary shadow-sm">
+                  <FaBook size={28} />
                 </div>
                 <div>
                   <h3 className="fw-bold mb-0">{stats.books}</h3>
-                  <p className="text-muted mb-0">Total Books</p>
+                  <p className="text-muted mb-0 fw-medium">Books Available</p>
                 </div>
               </div>
-            </div>
-            <div className="col-md-4">
-              <div className="stat-card d-flex align-items-center gap-3">
-                <div className="bg-success bg-opacity-10 p-3 rounded-circle text-success">
-                  <FaClipboardCheck size={24} />
+            </motion.div>
+
+            <motion.div
+              className="col-md-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="stat-card d-flex align-items-center gap-4">
+                <div className="bg-success bg-opacity-10 p-4 rounded-circle text-success shadow-sm">
+                  <FaClipboardCheck size={28} />
                 </div>
                 <div>
                   <h3 className="fw-bold mb-0">Active</h3>
-                  <p className="text-muted mb-0">System Status</p>
+                  <p className="text-muted mb-0 fw-medium">Store Status</p>
                 </div>
               </div>
-            </div>
-            <div className="col-md-4">
-              <div className="stat-card d-flex align-items-center gap-3">
-                <div className="bg-warning bg-opacity-10 p-3 rounded-circle text-warning">
-                  <FaUserFriends size={24} />
+            </motion.div>
+
+            <motion.div
+              className="col-md-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <div className="stat-card d-flex align-items-center gap-4">
+                <div className="bg-warning bg-opacity-10 p-4 rounded-circle text-warning shadow-sm">
+                  <FaUserFriends size={28} />
                 </div>
                 <div>
                   <h3 className="fw-bold mb-0">Online</h3>
-                  <p className="text-muted mb-0">Member Portal</p>
+                  <p className="text-muted mb-0 fw-medium">Community</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
       )}
 
       {/* 3. Services Grid */}
-      <section className="container py-5 my-4">
+      <section className="container py-5 my-5">
         <div className="text-center mb-5">
-          <h2 className="fw-bold text-dark">Library Services</h2>
-          <p className="text-muted">Comprehensive tools for students, faculty, and librarians.</p>
+          <h2 className="fw-bold display-5 mb-3" style={{color: '#1e293b'}}>Explore BookHaven</h2>
+          <p className="text-muted fs-5">Everything you need for your reading journey.</p>
         </div>
 
         <div className="row g-4">
@@ -135,28 +152,28 @@ const Home = () => {
             <>
               <div className="col-md-4">
                 <Link to="/add" className="text-decoration-none text-dark">
-                  <motion.div whileHover={{ y: -5 }} className="feature-card text-center">
-                    <div className="mb-3 text-primary"><FaBook size={40} /></div>
-                    <h4>Catalog Management</h4>
-                    <p className="text-muted small">Add new acquisitions and manage inventory.</p>
+                  <motion.div whileHover={{ y: -10 }} className="feature-card text-center" style={{borderTopColor: 'var(--primary)'}}>
+                    <div className="mb-4 text-primary bg-primary bg-opacity-10 d-inline-block p-3 rounded-circle"><FaBook size={32} /></div>
+                    <h4 className="fw-bold mb-3">Inventory Management</h4>
+                    <p className="text-muted">Add new titles and manage stock levels efficiently.</p>
                   </motion.div>
                 </Link>
               </div>
               <div className="col-md-4">
                 <Link to="/admin" className="text-decoration-none text-dark">
-                  <motion.div whileHover={{ y: -5 }} className="feature-card text-center">
-                    <div className="mb-3 text-danger"><FaUserFriends size={40} /></div>
-                    <h4>User Administration</h4>
-                    <p className="text-muted small">Manage member accounts and roles.</p>
+                  <motion.div whileHover={{ y: -10 }} className="feature-card text-center" style={{borderTopColor: 'var(--danger)'}}>
+                    <div className="mb-4 text-danger bg-danger bg-opacity-10 d-inline-block p-3 rounded-circle"><FaUserFriends size={32} /></div>
+                    <h4 className="fw-bold mb-3">User Management</h4>
+                    <p className="text-muted">Manage customer accounts and roles securely.</p>
                   </motion.div>
                 </Link>
               </div>
               <div className="col-md-4">
                 <Link to="/admin" className="text-decoration-none text-dark">
-                  <motion.div whileHover={{ y: -5 }} className="feature-card text-center">
-                    <div className="mb-3 text-success"><FaClipboardCheck size={40} /></div>
-                    <h4>Circulation Desk</h4>
-                    <p className="text-muted small">Process book issues and returns.</p>
+                  <motion.div whileHover={{ y: -10 }} className="feature-card text-center" style={{borderTopColor: 'var(--success)'}}>
+                    <div className="mb-4 text-success bg-success bg-opacity-10 d-inline-block p-3 rounded-circle"><FaClipboardCheck size={32} /></div>
+                    <h4 className="fw-bold mb-3">Order Processing</h4>
+                    <p className="text-muted">Review and fulfill customer orders seamlessly.</p>
                   </motion.div>
                 </Link>
               </div>
@@ -165,28 +182,28 @@ const Home = () => {
             <>
               <div className="col-md-4">
                 <Link to="/books" className="text-decoration-none text-dark">
-                  <motion.div whileHover={{ y: -5 }} className="feature-card text-center">
-                    <div className="mb-3 text-primary"><FaBookReader size={40} /></div>
-                    <h4>Digital Catalog</h4>
-                    <p className="text-muted small">Browse our extensive collection.</p>
+                  <motion.div whileHover={{ y: -10 }} className="feature-card text-center" style={{borderTopColor: 'var(--primary)'}}>
+                    <div className="mb-4 text-primary bg-primary bg-opacity-10 d-inline-block p-3 rounded-circle"><FaBookReader size={32} /></div>
+                    <h4 className="fw-bold mb-3">Browse Collection</h4>
+                    <p className="text-muted">Explore our extensive catalog of books.</p>
                   </motion.div>
                 </Link>
               </div>
               <div className="col-md-4">
                 <Link to="/orders" className="text-decoration-none text-dark">
-                  <motion.div whileHover={{ y: -5 }} className="feature-card text-center">
-                    <div className="mb-3 text-warning"><FaHistory size={40} /></div>
-                    <h4>Borrowing History</h4>
-                    <p className="text-muted small">View your current loans and history.</p>
+                  <motion.div whileHover={{ y: -10 }} className="feature-card text-center" style={{borderTopColor: 'var(--warning)'}}>
+                    <div className="mb-4 text-warning bg-warning bg-opacity-10 d-inline-block p-3 rounded-circle"><FaHistory size={32} /></div>
+                    <h4 className="fw-bold mb-3">Order History</h4>
+                    <p className="text-muted">Track your purchases and past orders.</p>
                   </motion.div>
                 </Link>
               </div>
               <div className="col-md-4">
                 <Link to="/profile" className="text-decoration-none text-dark">
-                  <motion.div whileHover={{ y: -5 }} className="feature-card text-center">
-                    <div className="mb-3 text-info"><FaLaptop size={40} /></div>
-                    <h4>My Account</h4>
-                    <p className="text-muted small">Update your profile details.</p>
+                  <motion.div whileHover={{ y: -10 }} className="feature-card text-center" style={{borderTopColor: 'var(--info)'}}>
+                    <div className="mb-4 text-info bg-info bg-opacity-10 d-inline-block p-3 rounded-circle"><FaLaptop size={32} /></div>
+                    <h4 className="fw-bold mb-3">My Profile</h4>
+                    <p className="text-muted">Manage your account settings.</p>
                   </motion.div>
                 </Link>
               </div>
