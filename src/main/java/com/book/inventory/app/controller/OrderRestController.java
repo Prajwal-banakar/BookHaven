@@ -32,7 +32,7 @@ public class OrderRestController {
 
     // Checkout from Cart
     @PostMapping("/checkout")
-    public ResponseEntity<?> checkout(@RequestBody Order paymentDetails) {
+    public ResponseEntity<?> checkout(@RequestBody Order checkoutDetails) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         
@@ -41,30 +41,17 @@ public class OrderRestController {
             return ResponseEntity.badRequest().body("Cart is empty");
         }
 
-        // Validate Stock
-        for (CartItem item : cart.getItems()) {
-            Book book = bookRepo.findByBookid(item.getBookId());
-            if (book == null || Integer.parseInt(book.getQuantity()) < item.getQuantity()) {
-                return ResponseEntity.badRequest().body("Not enough stock for: " + item.getTitle());
-            }
-        }
-
-        // Deduct Stock
-        for (CartItem item : cart.getItems()) {
-            Book book = bookRepo.findByBookid(item.getBookId());
-            int newQuantity = Integer.parseInt(book.getQuantity()) - item.getQuantity();
-            book.setQuantity(String.valueOf(newQuantity));
-            bookRepo.save(book);
-        }
-
-        // Create Order
+        // Create Order (PENDING)
         Order order = new Order();
         order.setUsername(username);
         order.setItems(cart.getItems());
         order.setTotalPrice(cart.getTotalPrice());
-        order.setStatus("PENDING"); // Changed from APPROVED to PENDING
+        order.setStatus("PENDING");
         order.setOrderDate(LocalDateTime.now());
-        order.setPaymentMethod(paymentDetails.getPaymentMethod());
+        
+        // Set Payment & Shipping Details from request
+        order.setPaymentMethod(checkoutDetails.getPaymentMethod());
+        order.setShippingAddress(checkoutDetails.getShippingAddress());
         order.setTransactionId(UUID.randomUUID().toString());
 
         orderRepo.save(order);
@@ -94,6 +81,23 @@ public class OrderRestController {
     @PutMapping("/{id}/status")
     public ResponseEntity<?> updateStatus(@PathVariable String id, @RequestParam String status) {
         return orderRepo.findById(id).map(order -> {
+            // If approving, check and deduct stock
+            if ("APPROVED".equals(status) && !"APPROVED".equals(order.getStatus())) {
+                for (CartItem item : order.getItems()) {
+                    Book book = bookRepo.findByBookid(item.getBookId());
+                    if (book == null) {
+                        return ResponseEntity.badRequest().body("Book not found: " + item.getTitle());
+                    }
+                    int currentStock = Integer.parseInt(book.getQuantity());
+                    if (currentStock < item.getQuantity()) {
+                        return ResponseEntity.badRequest().body("Not enough stock for: " + item.getTitle());
+                    }
+                    // Deduct stock
+                    book.setQuantity(String.valueOf(currentStock - item.getQuantity()));
+                    bookRepo.save(book);
+                }
+            }
+
             order.setStatus(status);
             orderRepo.save(order);
             return ResponseEntity.ok("Status updated");

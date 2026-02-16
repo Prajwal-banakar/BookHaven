@@ -38,7 +38,7 @@ public class AuthRestController {
         } else {
             user.setRole("USER");
         }
-
+        
         user.setFullName(fullName);
         user.setEmail(email);
         user.setPhoneNumber(phoneNumber);
@@ -53,7 +53,6 @@ public class AuthRestController {
         String username = authentication.getName();
         User user = userRepo.findByUsername(username);
         if (user != null) {
-            // Avoid sending password back
             user.setPassword(null);
             return ResponseEntity.ok(user);
         }
@@ -73,6 +72,17 @@ public class AuthRestController {
             user.setAddress(updatedUser.getAddress());
             
             userRepo.save(user);
+            user.setPassword(null);
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // Admin: Get user details by username
+    @GetMapping("/api/users/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username) {
+        User user = userRepo.findByUsername(username);
+        if (user != null) {
             user.setPassword(null);
             return ResponseEntity.ok(user);
         }

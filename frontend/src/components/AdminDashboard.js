@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FaEnvelope } from 'react-icons/fa';
+import { FaEnvelope, FaUser, FaPhone, FaMapMarkerAlt, FaTimes, FaTruck } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [selectedOrderAddress, setSelectedOrderAddress] = useState(null);
 
   useEffect(() => {
     fetchOrders();
@@ -26,6 +29,16 @@ const AdminDashboard = () => {
       fetchOrders();
     } catch (error) {
       alert('Failed to update status');
+    }
+  };
+
+  const handleUserClick = async (username) => {
+    try {
+      const response = await axios.get(`/api/users/${username}`);
+      setSelectedUser(response.data);
+      setShowUserModal(true);
+    } catch (error) {
+      alert('Failed to fetch user details');
     }
   };
 
@@ -53,6 +66,7 @@ const AdminDashboard = () => {
                 <tr>
                   <th className="p-3">Order ID</th>
                   <th className="p-3">User</th>
+                  <th className="p-3">Shipping</th>
                   <th className="p-3">Items</th>
                   <th className="p-3">Total</th>
                   <th className="p-3">Date</th>
@@ -64,7 +78,27 @@ const AdminDashboard = () => {
                 {orders.map(order => (
                   <tr key={order.id}>
                     <td className="p-3"><small className="text-muted">#{order.id.substring(0, 8)}</small></td>
-                    <td className="p-3">{order.username}</td>
+                    <td className="p-3">
+                      <button
+                        className="btn btn-link text-decoration-none p-0 fw-bold"
+                        onClick={() => handleUserClick(order.username)}
+                      >
+                        {order.username}
+                      </button>
+                    </td>
+                    <td className="p-3">
+                      {order.shippingAddress ? (
+                        <button
+                          className="btn btn-sm btn-light text-primary"
+                          onClick={() => setSelectedOrderAddress(order.shippingAddress)}
+                          title="View Shipping Address"
+                        >
+                          <FaTruck /> View
+                        </button>
+                      ) : (
+                        <span className="text-muted small">N/A</span>
+                      )}
+                    </td>
                     <td className="p-3">
                       {order.items && order.items.map((item, index) => (
                         <div key={index} className="small">
@@ -115,6 +149,94 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* User Details Modal */}
+      <AnimatePresence>
+        {showUserModal && selectedUser && (
+          <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <motion.div
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              className="modal-dialog modal-dialog-centered"
+            >
+              <div className="modal-content border-0 shadow-lg rounded-4">
+                <div className="modal-header bg-primary text-white border-0">
+                  <h5 className="modal-title fw-bold d-flex align-items-center gap-2">
+                    <FaUser /> User Details
+                  </h5>
+                  <button type="button" className="btn-close btn-close-white" onClick={() => setShowUserModal(false)}></button>
+                </div>
+                <div className="modal-body p-4">
+                  <div className="text-center mb-4">
+                    <div className="bg-light rounded-circle p-3 d-inline-block mb-2 text-primary">
+                      <FaUser size={40} />
+                    </div>
+                    <h4 className="fw-bold mb-0">{selectedUser.fullName}</h4>
+                    <p className="text-muted">@{selectedUser.username}</p>
+                  </div>
+
+                  <div className="d-flex align-items-center gap-3 mb-3 p-3 bg-light rounded-3">
+                    <FaEnvelope className="text-primary" />
+                    <div>
+                      <small className="text-muted d-block">Email</small>
+                      <span className="fw-medium">{selectedUser.email}</span>
+                    </div>
+                  </div>
+
+                  <div className="d-flex align-items-center gap-3 mb-3 p-3 bg-light rounded-3">
+                    <FaPhone className="text-success" />
+                    <div>
+                      <small className="text-muted d-block">Phone</small>
+                      <span className="fw-medium">{selectedUser.phoneNumber}</span>
+                    </div>
+                  </div>
+
+                  <div className="d-flex align-items-center gap-3 p-3 bg-light rounded-3">
+                    <FaMapMarkerAlt className="text-danger" />
+                    <div>
+                      <small className="text-muted d-block">Address</small>
+                      <span className="fw-medium">{selectedUser.address}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="modal-footer border-0">
+                  <button type="button" className="btn btn-secondary rounded-pill px-4" onClick={() => setShowUserModal(false)}>Close</button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Shipping Address Modal */}
+      <AnimatePresence>
+        {selectedOrderAddress && (
+          <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="modal-dialog modal-dialog-centered modal-sm"
+            >
+              <div className="modal-content border-0 shadow-lg rounded-4">
+                <div className="modal-header bg-info text-white border-0">
+                  <h5 className="modal-title fw-bold d-flex align-items-center gap-2">
+                    <FaTruck /> Shipping Address
+                  </h5>
+                  <button type="button" className="btn-close btn-close-white" onClick={() => setSelectedOrderAddress(null)}></button>
+                </div>
+                <div className="modal-body p-4 text-center">
+                  <p className="lead mb-0">{selectedOrderAddress}</p>
+                </div>
+                <div className="modal-footer border-0 justify-content-center">
+                  <button type="button" className="btn btn-secondary rounded-pill px-4" onClick={() => setSelectedOrderAddress(null)}>Close</button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

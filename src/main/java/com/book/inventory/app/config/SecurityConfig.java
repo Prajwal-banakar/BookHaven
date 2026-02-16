@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/books/**").hasRole("ADMIN")
                 .requestMatchers("/api/orders/all").hasRole("ADMIN")
                 .requestMatchers("/api/orders/*/status").hasRole("ADMIN")
+                .requestMatchers("/api/users/**").hasRole("ADMIN") // New endpoint
                 // Authenticated users
                 .requestMatchers("/api/books/**").authenticated()
                 .requestMatchers("/api/orders/**").authenticated()

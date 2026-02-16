@@ -21,7 +21,8 @@ public class Order {
     private LocalDateTime orderDate;
     private double totalPrice;
     
-    // Payment Details (Mock)
+    // Payment & Shipping Details
     private String paymentMethod;
     private String transactionId;
+    private String shippingAddress;
 }

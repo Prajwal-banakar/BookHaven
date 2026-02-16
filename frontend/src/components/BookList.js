@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { FaShoppingCart, FaEdit, FaTrash, FaCartPlus, FaCheckCircle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
@@ -11,6 +12,7 @@ const BookList = () => {
   const { addToCart } = useCart();
   const isAdmin = user?.role === 'ADMIN';
   const [showToast, setShowToast] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchBooks();
@@ -120,7 +122,10 @@ const BookList = () => {
               <div className="card-footer bg-transparent border-top-0">
                 {isAdmin ? (
                   <div className="d-flex gap-2">
-                    <button className="btn btn-outline-primary w-100 btn-sm d-flex align-items-center justify-content-center gap-2">
+                    <button
+                      className="btn btn-outline-primary w-100 btn-sm d-flex align-items-center justify-content-center gap-2"
+                      onClick={() => navigate(`/edit/${book.bookid}`)}
+                    >
                       <FaEdit /> Edit
                     </button>
                     <button

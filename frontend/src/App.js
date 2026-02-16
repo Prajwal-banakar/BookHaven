@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 import AddBook from './components/AddBook';
+import EditBook from './components/EditBook';
 import BookList from './components/BookList';
 import SearchBook from './components/SearchBook';
 import DeleteBook from './components/DeleteBook';
@@ -31,6 +32,7 @@ function App() {
               <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
               <Route path="/books" element={<ProtectedRoute><BookList /></ProtectedRoute>} />
               <Route path="/add" element={<ProtectedRoute><AddBook /></ProtectedRoute>} />
+              <Route path="/edit/:id" element={<ProtectedRoute><EditBook /></ProtectedRoute>} />
               <Route path="/search" element={<ProtectedRoute><SearchBook /></ProtectedRoute>} />
               <Route path="/delete" element={<ProtectedRoute><DeleteBook /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
