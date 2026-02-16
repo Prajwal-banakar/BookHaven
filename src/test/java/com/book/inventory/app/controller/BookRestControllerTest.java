@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -86,6 +85,17 @@ public class BookRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", roles = {"USER"})
+    void testSearchBooks() throws Exception {
+        Mockito.when(bookRepo.findByTitleContainingIgnoreCase("Java")).thenReturn(Arrays.asList(book1));
+
+        mockMvc.perform(get("/api/books/search").param("title", "Java"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1))
+                .andExpect(jsonPath("$[0].title").value("Java Basics"));
+    }
+
+    @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void testAddBook_Admin() throws Exception {
         Mockito.when(bookRepo.save(any(Book.class))).thenReturn(book1);
@@ -104,6 +114,21 @@ public class BookRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(book1)))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void testUpdateBook_Admin() throws Exception {
+        Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book1);
+        Mockito.when(bookRepo.save(any(Book.class))).thenReturn(book1);
+
+        book1.setPrice(600.0);
+
+        mockMvc.perform(put("/api/books/B001")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(book1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.price").value(600.0));
     }
 
     @Test

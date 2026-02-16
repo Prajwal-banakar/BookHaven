@@ -2,6 +2,7 @@ package com.book.inventory.app.controller;
 
 import com.book.inventory.app.domain.User;
 import com.book.inventory.app.repo.UserRepo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class AuthRestControllerTest {
 
     @MockBean
     private UserRepo userRepo;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void testRegisterUser_Success() throws Exception {
@@ -70,5 +74,39 @@ public class AuthRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("testuser"))
                 .andExpect(jsonPath("$.fullName").value("Test User"));
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testUpdateUserProfile() throws Exception {
+        User user = new User();
+        user.setUsername("testuser");
+        user.setFullName("Old Name");
+
+        User updatedUser = new User();
+        updatedUser.setFullName("New Name");
+        updatedUser.setEmail("new@example.com");
+
+        Mockito.when(userRepo.findByUsername("testuser")).thenReturn(user);
+        Mockito.when(userRepo.save(any(User.class))).thenReturn(user);
+
+        mockMvc.perform(put("/api/auth/profile")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedUser)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fullName").value("New Name"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void testGetUserByUsername_Admin() throws Exception {
+        User user = new User();
+        user.setUsername("targetuser");
+        
+        Mockito.when(userRepo.findByUsername("targetuser")).thenReturn(user);
+
+        mockMvc.perform(get("/api/users/targetuser"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("targetuser"));
     }
 }
