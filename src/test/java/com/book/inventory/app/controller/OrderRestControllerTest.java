@@ -18,8 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -53,12 +54,18 @@ public class OrderRestControllerTest {
         CartItem item = new CartItem();
         item.setBookId("B001");
         item.setQuantity(1);
-        cart.setItems(Collections.singletonList(item));
+        item.setTitle("Java");
+        
+        // Explicitly use ArrayList for mutability
+        List<CartItem> items = new ArrayList<>();
+        items.add(item);
+        cart.setItems(items);
         cart.setTotalPrice(100.0);
 
         Book book = new Book();
         book.setBookid("B001");
         book.setQuantity("10");
+        book.setTitle("Java");
 
         Mockito.when(cartRepo.findByUsername("user")).thenReturn(cart);
         Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book);
@@ -82,11 +89,16 @@ public class OrderRestControllerTest {
         CartItem item = new CartItem();
         item.setBookId("B001");
         item.setQuantity(1);
-        cart.setItems(Collections.singletonList(item));
+        item.setTitle("Java");
+        
+        List<CartItem> items = new ArrayList<>();
+        items.add(item);
+        cart.setItems(items);
 
         Book book = new Book();
         book.setBookid("B001");
         book.setQuantity("0"); // Out of stock
+        book.setTitle("Java");
 
         Mockito.when(cartRepo.findByUsername("user")).thenReturn(cart);
         Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book);
@@ -121,11 +133,13 @@ public class OrderRestControllerTest {
         CartItem item = new CartItem();
         item.setBookId("B001");
         item.setQuantity(1);
+        item.setTitle("Java");
         order.setItems(Collections.singletonList(item));
 
         Book book = new Book();
         book.setBookid("B001");
         book.setQuantity("10");
+        book.setTitle("Java");
 
         Mockito.when(orderRepo.findById("O001")).thenReturn(Optional.of(order));
         Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book);
