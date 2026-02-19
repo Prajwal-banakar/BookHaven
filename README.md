@@ -1,4 +1,4 @@
-# BookHaven - Modern Library Management System
+# BookHaven - Modern Online Book Store
 
 BookHaven is a comprehensive, full-stack web application designed to modernize the library experience. It features a robust Spring Boot backend and a dynamic, interactive React frontend, providing a seamless experience for both users and administrators.
 
@@ -51,8 +51,8 @@ BookHaven is a comprehensive, full-stack web application designed to modernize t
 
 1.  **Clone the repository**
     ```bash
-    git clone <repository-url>
-    cd BookApplication
+    git clone <repo-url>
+    cd BookHaven
     ```
 
 2.  **Backend Setup**
