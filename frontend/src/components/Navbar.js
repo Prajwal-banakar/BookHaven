@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { FaBookOpen, FaUserCircle, FaSignOutAlt, FaClipboardList, FaCog, FaShoppingCart } from 'react-icons/fa';
+import NotificationDropdown from './NotificationDropdown';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -64,6 +65,9 @@ const Navbar = () => {
           </ul>
 
           <div className="d-flex align-items-center gap-3 text-white">
+            {/* Notifications */}
+            <NotificationDropdown />
+
             {!isAdmin && (
               <Link to="/cart" className="text-decoration-none text-white position-relative me-2">
                 <FaShoppingCart size={20} />
