@@ -3,10 +3,14 @@ package com.book.inventory.app.controller;
 import com.book.inventory.app.domain.Book;
 import com.book.inventory.app.domain.Cart;
 import com.book.inventory.app.domain.CartItem;
+import com.book.inventory.app.domain.Notification;
 import com.book.inventory.app.domain.Order;
+import com.book.inventory.app.domain.User;
 import com.book.inventory.app.repo.BookRepo;
 import com.book.inventory.app.repo.CartRepo;
+import com.book.inventory.app.repo.NotificationRepo;
 import com.book.inventory.app.repo.OrderRepo;
+import com.book.inventory.app.repo.UserRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,9 +22,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -43,6 +46,12 @@ public class OrderRestControllerTest {
     @MockBean
     private CartRepo cartRepo;
 
+    @MockBean
+    private NotificationRepo notificationRepo;
+
+    @MockBean
+    private UserRepo userRepo;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -54,22 +63,22 @@ public class OrderRestControllerTest {
         CartItem item = new CartItem();
         item.setBookId("B001");
         item.setQuantity(1);
-        item.setTitle("Java");
-        
-        // Explicitly use ArrayList for mutability
-        List<CartItem> items = new ArrayList<>();
-        items.add(item);
-        cart.setItems(items);
+        cart.setItems(Collections.singletonList(item));
         cart.setTotalPrice(100.0);
 
         Book book = new Book();
         book.setBookid("B001");
         book.setQuantity("10");
-        book.setTitle("Java");
+
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setRole("ADMIN");
 
         Mockito.when(cartRepo.findByUsername("user")).thenReturn(cart);
         Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book);
         Mockito.when(orderRepo.save(any(Order.class))).thenReturn(new Order());
+        Mockito.when(userRepo.findByRole("ADMIN")).thenReturn(Collections.singletonList(admin));
+        Mockito.when(notificationRepo.save(any(Notification.class))).thenReturn(new Notification());
 
         Order checkoutDetails = new Order();
         checkoutDetails.setPaymentMethod("Credit Card");
@@ -79,6 +88,9 @@ public class OrderRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(checkoutDetails)))
                 .andExpect(status().isOk());
+        
+        // Verify notification sent to admin
+        Mockito.verify(notificationRepo, Mockito.times(1)).save(any(Notification.class));
     }
 
     @Test
@@ -89,16 +101,11 @@ public class OrderRestControllerTest {
         CartItem item = new CartItem();
         item.setBookId("B001");
         item.setQuantity(1);
-        item.setTitle("Java");
-        
-        List<CartItem> items = new ArrayList<>();
-        items.add(item);
-        cart.setItems(items);
+        cart.setItems(Collections.singletonList(item));
 
         Book book = new Book();
         book.setBookid("B001");
         book.setQuantity("0"); // Out of stock
-        book.setTitle("Java");
 
         Mockito.when(cartRepo.findByUsername("user")).thenReturn(cart);
         Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book);
@@ -129,25 +136,28 @@ public class OrderRestControllerTest {
     void testUpdateStatus_Approve() throws Exception {
         Order order = new Order();
         order.setId("O001");
+        order.setUsername("user");
         order.setStatus("PENDING");
         CartItem item = new CartItem();
         item.setBookId("B001");
         item.setQuantity(1);
-        item.setTitle("Java");
         order.setItems(Collections.singletonList(item));
 
         Book book = new Book();
         book.setBookid("B001");
         book.setQuantity("10");
-        book.setTitle("Java");
 
         Mockito.when(orderRepo.findById("O001")).thenReturn(Optional.of(order));
         Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book);
         Mockito.when(orderRepo.save(any(Order.class))).thenReturn(order);
+        Mockito.when(notificationRepo.save(any(Notification.class))).thenReturn(new Notification());
 
         mockMvc.perform(put("/api/orders/O001/status")
                 .param("status", "APPROVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Status updated"));
+        
+        // Verify notification sent to user
+        Mockito.verify(notificationRepo, Mockito.times(1)).save(any(Notification.class));
     }
 }
