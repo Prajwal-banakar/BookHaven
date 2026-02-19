@@ -1,26 +1,26 @@
 # BookHaven - Modern Online Book Store
 
-BookHaven is a comprehensive, full-stack web application designed to modernize the library experience. It features a robust Spring Boot backend and a dynamic, interactive React frontend, providing a seamless experience for both users and administrators.
+BookHaven is a comprehensive, full-stack e-commerce application designed for buying and selling books online. It features a robust Spring Boot backend and a dynamic, interactive React frontend, providing a seamless shopping experience for customers and powerful management tools for administrators.
 
 ## 🚀 Features
 
-### For Users
-*   **Browse Collection**: Explore a vast catalog of books with a modern, responsive grid layout.
+### For Customers
+*   **Browse Store**: Explore a vast catalog of books with a modern, responsive grid layout.
 *   **Smart Search**: Instantly find books by title using the powerful search bar.
 *   **Shopping Cart**: Add books to your cart, adjust quantities, and manage your selection.
-*   **Secure Checkout**: A multi-step checkout process with address collection and mock payment integration.
-*   **Order Tracking**: View order history and track the status of your requests (Pending, Approved, Delivered).
+*   **Secure Checkout**: A multi-step checkout process with shipping address collection and mock payment integration.
+*   **Order Tracking**: View order history and track the status of your purchases (Pending, Approved, Delivered).
 *   **Real-time Notifications**: Receive instant alerts when your order status changes.
 *   **User Profile**: Manage personal details (Name, Email, Address) with an easy-to-use edit interface.
-*   **Contact Support**: A floating contact button for quick access to library support.
+*   **Customer Support**: A floating contact button for quick access to store support.
 
 ### For Administrators
-*   **Admin Dashboard**: A centralized hub to view and manage all orders.
-*   **Order Management**: Approve, Deliver, or Cancel user orders. Stock is automatically deducted upon approval.
-*   **User Insights**: Click on any username in the order list to view their full contact details and address.
+*   **Admin Dashboard**: A centralized hub to view and manage all customer orders.
+*   **Order Fulfillment**: Approve, Deliver, or Cancel orders. Stock is automatically deducted upon approval.
+*   **Customer Insights**: Click on any username in the order list to view their full contact details and shipping address.
 *   **Admin Notifications**: Receive alerts whenever a new order is placed.
-*   **Inventory Management**: Add new books, update details, and remove outdated items.
-*   **User Messages**: View inquiries sent by users through the contact form.
+*   **Inventory Management**: Add new books, update pricing/stock, and remove outdated items.
+*   **Customer Messages**: View inquiries sent by users through the contact form.
 *   **Role-Based Access**: Strict security ensuring only admins can access sensitive features.
 
 ## 🛠️ Tech Stack
@@ -51,8 +51,8 @@ BookHaven is a comprehensive, full-stack web application designed to modernize t
 
 1.  **Clone the repository**
     ```bash
-    git clone <repo-url>
-    cd BookHaven
+    git clone <repository-url>
+    cd BookApplication
     ```
 
 2.  **Backend Setup**
@@ -74,11 +74,11 @@ BookHaven is a comprehensive, full-stack web application designed to modernize t
 
 ## 🔑 Usage Guide
 
-1.  **Register**: Create a new account.
+1.  **Register**: Create a new customer account.
     *   **Tip**: Include "admin" in your username (e.g., `superadmin`) to automatically register as an **Administrator**.
 2.  **Login**: Access your personalized dashboard.
-3.  **Explore**: Browse books, add them to your cart, and proceed to checkout.
-4.  **Manage**: If logged in as Admin, use the Dashboard to approve orders and manage inventory.
+3.  **Shop**: Browse books, add them to your cart, and proceed to checkout.
+4.  **Manage**: If logged in as Admin, use the Dashboard to fulfill orders and manage inventory.
 
 ## 📂 Project Structure
 
