@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { motion } from 'framer-motion';
-import { FaCreditCard, FaLock, FaMapMarkerAlt, FaArrowRight, FaCheck } from 'react-icons/fa';
+import { FaLock, FaArrowRight } from 'react-icons/fa';
 
 const Checkout = () => {
   const { cart, fetchCart } = useCart();

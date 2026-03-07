@@ -3,7 +3,7 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { FaShoppingCart, FaEdit, FaTrash, FaCartPlus, FaCheckCircle } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaCartPlus, FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const BookList = () => {

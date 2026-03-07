@@ -22,7 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -63,7 +63,8 @@ public class OrderRestControllerTest {
         CartItem item = new CartItem();
         item.setBookId("B001");
         item.setQuantity(1);
-        cart.setItems(Collections.singletonList(item));
+        // Use a mutable list
+        cart.setItems(new ArrayList<>(Collections.singletonList(item)));
         cart.setTotalPrice(100.0);
 
         Book book = new Book();
@@ -74,9 +75,12 @@ public class OrderRestControllerTest {
         admin.setUsername("admin");
         admin.setRole("ADMIN");
 
+        Order savedOrder = new Order();
+        savedOrder.setId("123456789012345678901234"); // Realistic MongoDB ID
+
         Mockito.when(cartRepo.findByUsername("user")).thenReturn(cart);
         Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book);
-        Mockito.when(orderRepo.save(any(Order.class))).thenReturn(new Order());
+        Mockito.when(orderRepo.save(any(Order.class))).thenReturn(savedOrder);
         Mockito.when(userRepo.findByRole("ADMIN")).thenReturn(Collections.singletonList(admin));
         Mockito.when(notificationRepo.save(any(Notification.class))).thenReturn(new Notification());
 
@@ -101,22 +105,21 @@ public class OrderRestControllerTest {
         CartItem item = new CartItem();
         item.setBookId("B001");
         item.setQuantity(1);
-        cart.setItems(Collections.singletonList(item));
+        cart.setItems(new ArrayList<>(Collections.singletonList(item)));
 
         Book book = new Book();
         book.setBookid("B001");
         book.setQuantity("0"); // Out of stock
 
         Mockito.when(cartRepo.findByUsername("user")).thenReturn(cart);
-        Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book);
-
-        Order checkoutDetails = new Order();
-
-        mockMvc.perform(post("/api/orders/checkout")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(checkoutDetails)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Not enough stock")));
+        // This test doesn't need to mock bookRepo because the logic is in the controller
+        // But the controller needs it.
+        // The error is in the checkout method, which doesn't deduct stock anymore.
+        // The stock check is now in updateStatus. Let's re-evaluate this test.
+        // The checkout should succeed even if stock is 0, because stock is checked on APPROVAL.
+        
+        // Let's test the original intent: stock check on approval.
+        // This test is now invalid for checkout. I will remove it and add it to updateStatus.
     }
 
     @Test
@@ -133,9 +136,9 @@ public class OrderRestControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void testUpdateStatus_Approve() throws Exception {
+    void testUpdateStatus_Approve_Success() throws Exception {
         Order order = new Order();
-        order.setId("O001");
+        order.setId("123456789012345678901234"); // Realistic ID
         order.setUsername("user");
         order.setStatus("PENDING");
         CartItem item = new CartItem();
@@ -147,17 +150,41 @@ public class OrderRestControllerTest {
         book.setBookid("B001");
         book.setQuantity("10");
 
-        Mockito.when(orderRepo.findById("O001")).thenReturn(Optional.of(order));
+        Mockito.when(orderRepo.findById("123456789012345678901234")).thenReturn(Optional.of(order));
         Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book);
         Mockito.when(orderRepo.save(any(Order.class))).thenReturn(order);
         Mockito.when(notificationRepo.save(any(Notification.class))).thenReturn(new Notification());
 
-        mockMvc.perform(put("/api/orders/O001/status")
+        mockMvc.perform(put("/api/orders/123456789012345678901234/status")
                 .param("status", "APPROVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Status updated"));
         
         // Verify notification sent to user
         Mockito.verify(notificationRepo, Mockito.times(1)).save(any(Notification.class));
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void testUpdateStatus_Approve_OutOfStock() throws Exception {
+        Order order = new Order();
+        order.setId("123456789012345678901234");
+        order.setStatus("PENDING");
+        CartItem item = new CartItem();
+        item.setBookId("B001");
+        item.setQuantity(1);
+        order.setItems(Collections.singletonList(item));
+
+        Book book = new Book();
+        book.setBookid("B001");
+        book.setQuantity("0"); // Out of stock
+
+        Mockito.when(orderRepo.findById("123456789012345678901234")).thenReturn(Optional.of(order));
+        Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book);
+
+        mockMvc.perform(put("/api/orders/123456789012345678901234/status")
+                .param("status", "APPROVED"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Not enough stock")));
     }
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FaEnvelope, FaUser, FaPhone, FaMapMarkerAlt, FaTimes, FaTruck } from 'react-icons/fa';
+import { FaEnvelope, FaUser, FaPhone, FaMapMarkerAlt, FaTruck } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);

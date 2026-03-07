@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { FaBookOpen, FaUserCircle, FaSignOutAlt, FaClipboardList, FaCog, FaShoppingCart } from 'react-icons/fa';
+import { FaBookOpen, FaUserCircle, FaSignOutAlt, FaClipboardList, FaCog, FaShoppingCart, FaComments } from 'react-icons/fa';
 import NotificationDropdown from './NotificationDropdown';
 
 const Navbar = () => {
@@ -48,6 +48,11 @@ const Navbar = () => {
                 <li className="nav-item">
                   <Link className={`nav-link ${isActive('/admin')}`} to="/admin">
                     <FaCog className="me-1" /> Dashboard
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className={`nav-link ${isActive('/admin/chat')}`} to="/admin/chat">
+                    <FaComments className="me-1" /> Live Chat
                   </Link>
                 </li>
               </>

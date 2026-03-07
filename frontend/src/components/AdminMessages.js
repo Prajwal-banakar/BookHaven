@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaEnvelope, FaUser, FaClock } from 'react-icons/fa';
+import { FaUser, FaClock } from 'react-icons/fa';
 
 const AdminMessages = () => {
   const [messages, setMessages] = useState([]);

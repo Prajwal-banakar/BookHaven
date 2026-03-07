@@ -62,26 +62,27 @@ public class OrderRestController {
         order.setShippingAddress(paymentDetails.getShippingAddress());
         order.setTransactionId(UUID.randomUUID().toString());
 
-        orderRepo.save(order);
+        // Save the order to generate its ID
+        Order savedOrder = orderRepo.save(order);
 
         // Clear Cart
         cart.getItems().clear();
         cart.setTotalPrice(0);
         cartRepo.save(cart);
 
-        // Notify Admins
+        // Notify Admins (using the savedOrder with a valid ID)
         List<User> admins = userRepo.findByRole("ADMIN");
         for (User admin : admins) {
             Notification notification = new Notification();
             notification.setUsername(admin.getUsername());
-            notification.setMessage("New Order #" + order.getId().substring(0, 8) + " placed by " + username);
+            notification.setMessage("New Order #" + savedOrder.getId().substring(0, 8) + " placed by " + username);
             notification.setType("INFO");
             notification.setRead(false);
             notification.setTimestamp(LocalDateTime.now());
             notificationRepo.save(notification);
         }
 
-        return ResponseEntity.ok(order);
+        return ResponseEntity.ok(savedOrder);
     }
 
     // User: Get my orders
