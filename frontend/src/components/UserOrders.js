@@ -18,6 +18,18 @@ const UserOrders = () => {
     }
   };
 
+  const getTrackingUrl = (carrier, trackingNumber) => {
+    // Simple logic to generate a tracking URL
+    if (carrier?.toLowerCase().includes('fedex')) {
+      return `https://www.fedex.com/fedextrack/?trknbr=${trackingNumber}`;
+    }
+    if (carrier?.toLowerCase().includes('ups')) {
+      return `https://www.ups.com/track?loc=en_US&tracknum=${trackingNumber}`;
+    }
+    // Default search
+    return `https://www.google.com/search?q=${carrier} ${trackingNumber}`;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -36,6 +48,7 @@ const UserOrders = () => {
                   <th className="p-3">Date</th>
                   <th className="p-3">Total Price</th>
                   <th className="p-3">Status</th>
+                  <th className="p-3">Tracking</th>
                 </tr>
               </thead>
               <tbody>
@@ -49,10 +62,6 @@ const UserOrders = () => {
                           <span className="text-muted ms-2">x{item.quantity}</span>
                         </div>
                       ))}
-                      {!order.items && order.bookTitle && (
-                        // Fallback for old single-item orders
-                        <div className="fw-medium">{order.bookTitle}</div>
-                      )}
                     </td>
                     <td className="p-3">{new Date(order.orderDate).toLocaleDateString()}</td>
                     <td className="p-3 fw-bold text-success">₹{order.totalPrice || order.price}</td>
@@ -61,11 +70,25 @@ const UserOrders = () => {
                         {order.status}
                       </span>
                     </td>
+                    <td className="p-3">
+                      {order.status === 'DELIVERED' && order.trackingNumber ? (
+                        <a
+                          href={getTrackingUrl(order.carrier, order.trackingNumber)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-sm btn-outline-primary"
+                        >
+                          Track
+                        </a>
+                      ) : (
+                        <span className="text-muted small">N/A</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
                 {orders.length === 0 && (
                   <tr>
-                    <td colSpan="5" className="text-center p-5 text-muted">
+                    <td colSpan="6" className="text-center p-5 text-muted">
                       No orders found. Go to Books to place an order.
                     </td>
                   </tr>

@@ -25,4 +25,8 @@ public class Order {
     private String paymentMethod;
     private String transactionId;
     private String shippingAddress;
+    
+    // Delivery Tracking
+    private String carrier;
+    private String trackingNumber;
 }

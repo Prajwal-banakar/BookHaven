@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -42,7 +43,7 @@ public class OrderRestController {
 
     // Checkout from Cart
     @PostMapping("/checkout")
-    public ResponseEntity<?> checkout(@RequestBody Order paymentDetails) {
+    public ResponseEntity<?> checkout(@RequestBody Order checkoutDetails) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         
@@ -58,11 +59,12 @@ public class OrderRestController {
         order.setTotalPrice(cart.getTotalPrice());
         order.setStatus("PENDING");
         order.setOrderDate(LocalDateTime.now());
-        order.setPaymentMethod(paymentDetails.getPaymentMethod());
-        order.setShippingAddress(paymentDetails.getShippingAddress());
+        
+        // Set Payment & Shipping Details from request
+        order.setPaymentMethod(checkoutDetails.getPaymentMethod());
+        order.setShippingAddress(checkoutDetails.getShippingAddress());
         order.setTransactionId(UUID.randomUUID().toString());
 
-        // Save the order to generate its ID
         Order savedOrder = orderRepo.save(order);
 
         // Clear Cart
@@ -70,7 +72,7 @@ public class OrderRestController {
         cart.setTotalPrice(0);
         cartRepo.save(cart);
 
-        // Notify Admins (using the savedOrder with a valid ID)
+        // Notify Admins
         List<User> admins = userRepo.findByRole("ADMIN");
         for (User admin : admins) {
             Notification notification = new Notification();
@@ -100,7 +102,9 @@ public class OrderRestController {
 
     // Admin: Update order status
     @PutMapping("/{id}/status")
-    public ResponseEntity<?> updateStatus(@PathVariable String id, @RequestParam String status) {
+    public ResponseEntity<?> updateStatus(@PathVariable String id, @RequestBody Map<String, String> payload) {
+        String status = payload.get("status");
+        
         return orderRepo.findById(id).map(order -> {
             // If approving, check and deduct stock
             if ("APPROVED".equals(status) && !"APPROVED".equals(order.getStatus())) {
@@ -117,6 +121,12 @@ public class OrderRestController {
                     book.setQuantity(String.valueOf(currentStock - item.getQuantity()));
                     bookRepo.save(book);
                 }
+            }
+            
+            // If delivering, add tracking info
+            if ("DELIVERED".equals(status)) {
+                order.setCarrier(payload.get("carrier"));
+                order.setTrackingNumber(payload.get("trackingNumber"));
             }
             
             order.setStatus(status);

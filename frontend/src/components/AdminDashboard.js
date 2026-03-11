@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FaEnvelope, FaUser, FaPhone, FaMapMarkerAlt, FaTruck } from 'react-icons/fa';
+import { FaEnvelope, FaUser, FaPhone, FaMapMarkerAlt, FaTimes, FaTruck } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [selectedOrderAddress, setSelectedOrderAddress] = useState(null);
+  const [deliveryOrder, setDeliveryOrder] = useState(null);
+  const [trackingInfo, setTrackingInfo] = useState({ carrier: '', trackingNumber: '' });
 
   useEffect(() => {
     fetchOrders();
@@ -23,13 +25,27 @@ const AdminDashboard = () => {
     }
   };
 
-  const updateStatus = async (id, status) => {
+  const updateStatus = async (id, status, trackingData = {}) => {
     try {
-      await axios.put(`/api/orders/${id}/status?status=${status}`);
+      await axios.put(`/api/orders/${id}/status`, { status, ...trackingData });
       fetchOrders();
     } catch (error) {
       alert('Failed to update status');
     }
+  };
+
+  const handleDeliverClick = (order) => {
+    setDeliveryOrder(order);
+    setTrackingInfo({ carrier: '', trackingNumber: '' });
+  };
+
+  const handleConfirmDelivery = () => {
+    if (!trackingInfo.carrier || !trackingInfo.trackingNumber) {
+      alert('Please enter both carrier and tracking number.');
+      return;
+    }
+    updateStatus(deliveryOrder.id, 'DELIVERED', trackingInfo);
+    setDeliveryOrder(null);
   };
 
   const handleUserClick = async (username) => {
@@ -106,9 +122,6 @@ const AdminDashboard = () => {
                           <span className="text-muted ms-1">({item.quantity})</span>
                         </div>
                       ))}
-                      {!order.items && order.bookTitle && (
-                        <div className="fw-medium">{order.bookTitle}</div>
-                      )}
                     </td>
                     <td className="p-3 fw-bold">₹{order.totalPrice || order.price}</td>
                     <td className="p-3">{new Date(order.orderDate).toLocaleDateString()}</td>
@@ -128,7 +141,7 @@ const AdminDashboard = () => {
                         </button>
                         <button
                           className="btn btn-outline-primary"
-                          onClick={() => updateStatus(order.id, 'DELIVERED')}
+                          onClick={() => handleDeliverClick(order)}
                           disabled={order.status === 'DELIVERED'}
                         >
                           Deliver
@@ -150,88 +163,54 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* User Details Modal */}
+      {/* Modals */}
       <AnimatePresence>
         {showUserModal && selectedUser && (
           <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="modal-dialog modal-dialog-centered"
-            >
+            <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -50 }} className="modal-dialog modal-dialog-centered">
               <div className="modal-content border-0 shadow-lg rounded-4">
                 <div className="modal-header bg-primary text-white border-0">
-                  <h5 className="modal-title fw-bold d-flex align-items-center gap-2">
-                    <FaUser /> User Details
-                  </h5>
+                  <h5 className="modal-title fw-bold d-flex align-items-center gap-2"><FaUser /> User Details</h5>
                   <button type="button" className="btn-close btn-close-white" onClick={() => setShowUserModal(false)}></button>
                 </div>
                 <div className="modal-body p-4">
                   <div className="text-center mb-4">
-                    <div className="bg-light rounded-circle p-3 d-inline-block mb-2 text-primary">
-                      <FaUser size={40} />
-                    </div>
+                    <div className="bg-light rounded-circle p-3 d-inline-block mb-2 text-primary"><FaUser size={40} /></div>
                     <h4 className="fw-bold mb-0">{selectedUser.fullName}</h4>
                     <p className="text-muted">@{selectedUser.username}</p>
                   </div>
-
-                  <div className="d-flex align-items-center gap-3 mb-3 p-3 bg-light rounded-3">
-                    <FaEnvelope className="text-primary" />
-                    <div>
-                      <small className="text-muted d-block">Email</small>
-                      <span className="fw-medium">{selectedUser.email}</span>
-                    </div>
-                  </div>
-
-                  <div className="d-flex align-items-center gap-3 mb-3 p-3 bg-light rounded-3">
-                    <FaPhone className="text-success" />
-                    <div>
-                      <small className="text-muted d-block">Phone</small>
-                      <span className="fw-medium">{selectedUser.phoneNumber}</span>
-                    </div>
-                  </div>
-
-                  <div className="d-flex align-items-center gap-3 p-3 bg-light rounded-3">
-                    <FaMapMarkerAlt className="text-danger" />
-                    <div>
-                      <small className="text-muted d-block">Address</small>
-                      <span className="fw-medium">{selectedUser.address}</span>
-                    </div>
-                  </div>
+                  <div className="d-flex align-items-center gap-3 mb-3 p-3 bg-light rounded-3"><FaEnvelope className="text-primary" /><div><small className="text-muted d-block">Email</small><span className="fw-medium">{selectedUser.email}</span></div></div>
+                  <div className="d-flex align-items-center gap-3 mb-3 p-3 bg-light rounded-3"><FaPhone className="text-success" /><div><small className="text-muted d-block">Phone</small><span className="fw-medium">{selectedUser.phoneNumber}</span></div></div>
+                  <div className="d-flex align-items-center gap-3 p-3 bg-light rounded-3"><FaMapMarkerAlt className="text-danger" /><div><small className="text-muted d-block">Address</small><span className="fw-medium">{selectedUser.address}</span></div></div>
                 </div>
-                <div className="modal-footer border-0">
-                  <button type="button" className="btn btn-secondary rounded-pill px-4" onClick={() => setShowUserModal(false)}>Close</button>
-                </div>
+                <div className="modal-footer border-0"><button type="button" className="btn btn-secondary rounded-pill px-4" onClick={() => setShowUserModal(false)}>Close</button></div>
               </div>
             </motion.div>
           </div>
         )}
-      </AnimatePresence>
 
-      {/* Shipping Address Modal */}
-      <AnimatePresence>
         {selectedOrderAddress && (
           <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="modal-dialog modal-dialog-centered modal-sm"
-            >
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="modal-dialog modal-dialog-centered modal-sm">
               <div className="modal-content border-0 shadow-lg rounded-4">
-                <div className="modal-header bg-info text-white border-0">
-                  <h5 className="modal-title fw-bold d-flex align-items-center gap-2">
-                    <FaTruck /> Shipping Address
-                  </h5>
-                  <button type="button" className="btn-close btn-close-white" onClick={() => setSelectedOrderAddress(null)}></button>
+                <div className="modal-header bg-info text-white border-0"><h5 className="modal-title fw-bold d-flex align-items-center gap-2"><FaTruck /> Shipping Address</h5><button type="button" className="btn-close btn-close-white" onClick={() => setSelectedOrderAddress(null)}></button></div>
+                <div className="modal-body p-4 text-center"><p className="lead mb-0">{selectedOrderAddress}</p></div>
+                <div className="modal-footer border-0 justify-content-center"><button type="button" className="btn btn-secondary rounded-pill px-4" onClick={() => setSelectedOrderAddress(null)}>Close</button></div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {deliveryOrder && (
+          <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="modal-dialog modal-dialog-centered">
+              <div className="modal-content border-0 shadow-lg rounded-4">
+                <div className="modal-header bg-primary text-white border-0"><h5 className="modal-title fw-bold">Enter Delivery Details</h5><button type="button" className="btn-close btn-close-white" onClick={() => setDeliveryOrder(null)}></button></div>
+                <div className="modal-body p-4">
+                  <div className="mb-3"><label className="form-label">Carrier</label><input type="text" className="form-control" value={trackingInfo.carrier} onChange={(e) => setTrackingInfo({...trackingInfo, carrier: e.target.value})} placeholder="e.g., FedEx, UPS" /></div>
+                  <div className="mb-3"><label className="form-label">Tracking Number</label><input type="text" className="form-control" value={trackingInfo.trackingNumber} onChange={(e) => setTrackingInfo({...trackingInfo, trackingNumber: e.target.value})} placeholder="e.g., 1234567890" /></div>
                 </div>
-                <div className="modal-body p-4 text-center">
-                  <p className="lead mb-0">{selectedOrderAddress}</p>
-                </div>
-                <div className="modal-footer border-0 justify-content-center">
-                  <button type="button" className="btn btn-secondary rounded-pill px-4" onClick={() => setSelectedOrderAddress(null)}>Close</button>
-                </div>
+                <div className="modal-footer border-0"><button type="button" className="btn btn-secondary" onClick={() => setDeliveryOrder(null)}>Cancel</button><button type="button" className="btn btn-primary" onClick={handleConfirmDelivery}>Confirm Delivery</button></div>
               </div>
             </motion.div>
           </div>
