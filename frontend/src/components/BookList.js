@@ -3,8 +3,16 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { FaEdit, FaTrash, FaCartPlus, FaCheckCircle } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { FaEdit, FaTrash, FaCartPlus, FaCheckCircle, FaStar, FaRegStar } from 'react-icons/fa';
+import { useNavigate, Link } from 'react-router-dom';
+
+const StarRating = ({ rating }) => {
+  const stars = [];
+  for (let i = 1; i <= 5; i++) {
+    stars.push(i <= rating ? <FaStar key={i} className="text-warning" /> : <FaRegStar key={i} className="text-muted" />);
+  }
+  return <div className="d-flex gap-1">{stars}</div>;
+};
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
@@ -91,34 +99,28 @@ const BookList = () => {
             variants={item}
           >
             <div className="card h-100">
-              <div className="card-body">
-                <h5 className="card-title fw-bold">{book.title}</h5>
-                <h6 className="card-subtitle mb-3 text-muted">{book.author}</h6>
-                <div className="card-text">
-                  <div className="d-flex justify-content-between mb-2">
-                    <span>Publisher:</span>
-                    <span className="fw-medium">{book.publisher}</span>
+              <Link to={`/book/${book.bookid}`} className="text-decoration-none text-dark">
+                <div className="card-body">
+                  <h5 className="card-title fw-bold">{book.title}</h5>
+                  <h6 className="card-subtitle mb-3 text-muted">{book.author}</h6>
+                  <div className="d-flex align-items-center gap-2 mb-2">
+                    <StarRating rating={book.averageRating} />
+                    <small className="text-muted">({book.reviewCount || 0})</small>
                   </div>
-                  <div className="d-flex justify-content-between mb-2">
-                    <span>Year:</span>
-                    <span className="fw-medium">{book.publicationYear}</span>
-                  </div>
-                  <div className="d-flex justify-content-between mb-2">
-                    <span>Price:</span>
-                    <span className="fw-bold text-success">₹{book.price}</span>
-                  </div>
-                  <div className="d-flex justify-content-between mb-2">
-                    <span>Quantity:</span>
-                    <span className={`badge ${book.quantity > 0 ? 'bg-success' : 'bg-danger'}`}>
-                      {book.quantity > 0 ? book.quantity : 'Out of Stock'}
-                    </span>
-                  </div>
-                  <div className="d-flex justify-content-between">
-                    <span>Language:</span>
-                    <span className="badge bg-secondary">{book.language}</span>
+                  <div className="card-text">
+                    <div className="d-flex justify-content-between mb-2">
+                      <span>Price:</span>
+                      <span className="fw-bold text-success">₹{book.price}</span>
+                    </div>
+                    <div className="d-flex justify-content-between mb-2">
+                      <span>Quantity:</span>
+                      <span className={`badge ${book.quantity > 0 ? 'bg-success' : 'bg-danger'}`}>
+                        {book.quantity > 0 ? book.quantity : 'Out of Stock'}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
               <div className="card-footer bg-transparent border-top-0">
                 {isAdmin ? (
                   <div className="d-flex gap-2">

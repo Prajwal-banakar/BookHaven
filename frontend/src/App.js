@@ -8,6 +8,7 @@ import Register from './components/Register';
 import AddBook from './components/AddBook';
 import EditBook from './components/EditBook';
 import BookList from './components/BookList';
+import BookDetails from './components/BookDetails';
 import SearchBook from './components/SearchBook';
 import DeleteBook from './components/DeleteBook';
 import Profile from './components/Profile';
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                 <Route path="/books" element={<ProtectedRoute><BookList /></ProtectedRoute>} />
+                <Route path="/book/:id" element={<ProtectedRoute><BookDetails /></ProtectedRoute>} />
                 <Route path="/add" element={<ProtectedRoute><AddBook /></ProtectedRoute>} />
                 <Route path="/edit/:id" element={<ProtectedRoute><EditBook /></ProtectedRoute>} />
                 <Route path="/search" element={<ProtectedRoute><SearchBook /></ProtectedRoute>} />

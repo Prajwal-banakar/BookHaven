@@ -23,6 +23,10 @@ public class Book {
     private String quantity;
     private String language;
 
+    // New fields for reviews
+    private double averageRating;
+    private int reviewCount;
+
     @Transient
     private String total;
     @Transient
