@@ -5,7 +5,7 @@ BookHaven is a comprehensive, full-stack e-commerce application designed for buy
 ## 🚀 Features
 
 ### For Customers
-*   **Dynamic Home Page**: A modern dashboard with quick access to key features.
+*   **Enhanced Home Page**: A professional, engaging layout featuring a hero section, "New Arrivals" and "Top Rated Books" carousels, and a "Browse by Genre" section.
 *   **Browse Store**: Explore a vast catalog of books with a modern, responsive grid layout.
 *   **Advanced Search**: Find books by title, author, publication year range, and price range.
 *   **Wishlist/Favorites**: Add books to a personal wishlist to save for later.
