@@ -3,7 +3,7 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { FaEdit, FaTrash, FaCartPlus, FaCheckCircle, FaStar, FaRegStar } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaCartPlus, FaCheckCircle, FaStar, FaRegStar, FaHeart } from 'react-icons/fa';
 import { useNavigate, Link } from 'react-router-dom';
 
 const StarRating = ({ rating }) => {
@@ -20,11 +20,15 @@ const BookList = () => {
   const { addToCart } = useCart();
   const isAdmin = user?.role === 'ADMIN';
   const [showToast, setShowToast] = useState(false);
+  const [wishlist, setWishlist] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchBooks();
-  }, []);
+    if (!isAdmin) {
+      fetchWishlist();
+    }
+  }, [isAdmin]);
 
   const fetchBooks = async () => {
     try {
@@ -35,11 +39,34 @@ const BookList = () => {
     }
   };
 
+  const fetchWishlist = async () => {
+    try {
+      const response = await axios.get('/api/wishlist');
+      setWishlist(response.data.bookIds);
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+    }
+  };
+
   const handleAddToCart = async (bookId) => {
     const success = await addToCart(bookId);
     if (success) {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
+    }
+  };
+
+  const handleAddToWishlist = async (bookId) => {
+    try {
+      if (wishlist.includes(bookId)) {
+        await axios.delete(`/api/wishlist/${bookId}`);
+        setWishlist(wishlist.filter(id => id !== bookId));
+      } else {
+        await axios.post(`/api/wishlist/${bookId}`);
+        setWishlist([...wishlist, bookId]);
+      }
+    } catch (error) {
+      alert('Failed to update wishlist');
     }
   };
 
@@ -138,13 +165,21 @@ const BookList = () => {
                     </button>
                   </div>
                 ) : (
-                  <button
-                    className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
-                    onClick={() => handleAddToCart(book.bookid)}
-                    disabled={book.quantity <= 0}
-                  >
-                    <FaCartPlus /> {book.quantity > 0 ? 'Add to Cart' : 'Unavailable'}
-                  </button>
+                  <div className="d-flex gap-2">
+                    <button
+                      className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
+                      onClick={() => handleAddToCart(book.bookid)}
+                      disabled={book.quantity <= 0}
+                    >
+                      <FaCartPlus /> {book.quantity > 0 ? 'Add to Cart' : 'Unavailable'}
+                    </button>
+                    <button
+                      className={`btn ${wishlist.includes(book.bookid) ? 'btn-danger' : 'btn-outline-danger'}`}
+                      onClick={() => handleAddToWishlist(book.bookid)}
+                    >
+                      <FaHeart />
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

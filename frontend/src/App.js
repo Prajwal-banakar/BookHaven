@@ -22,6 +22,7 @@ import ChatWidget from './components/ChatWidget';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import Wishlist from './components/Wishlist';
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
                 <Route path="/admin/chat" element={<ProtectedRoute><AdminChat /></ProtectedRoute>} />
                 <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
                 <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
               </Routes>
             </div>
             <ProtectedRoute>

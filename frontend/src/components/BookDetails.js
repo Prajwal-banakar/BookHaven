@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaStar, FaRegStar, FaUserCircle, FaCartPlus, FaBook } from 'react-icons/fa';
+import { FaStar, FaRegStar, FaUserCircle, FaCartPlus, FaBook, FaHeart } from 'react-icons/fa';
 import { useCart } from '../context/CartContext';
 
 const StarRating = ({ rating }) => {
@@ -18,10 +18,12 @@ const BookDetails = () => {
   const [book, setBook] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
+  const [inWishlist, setInWishlist] = useState(false);
   const { addToCart } = useCart();
 
   useEffect(() => {
     fetchBookAndReviews();
+    checkWishlist();
   }, [id]);
 
   const fetchBookAndReviews = async () => {
@@ -37,6 +39,17 @@ const BookDetails = () => {
     }
   };
 
+  const checkWishlist = async () => {
+    try {
+      const response = await axios.get('/api/wishlist');
+      if (response.data && response.data.bookIds.includes(id)) {
+        setInWishlist(true);
+      }
+    } catch (error) {
+      console.error('Failed to check wishlist', error);
+    }
+  };
+
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (newReview.rating === 0) {
@@ -49,6 +62,19 @@ const BookDetails = () => {
       fetchBookAndReviews(); // Refresh data
     } catch (error) {
       alert('Failed to submit review.');
+    }
+  };
+
+  const handleWishlistClick = async () => {
+    try {
+      if (inWishlist) {
+        await axios.delete(`/api/wishlist/${id}`);
+      } else {
+        await axios.post(`/api/wishlist/${id}`);
+      }
+      setInWishlist(!inWishlist);
+    } catch (error) {
+      alert('Failed to update wishlist.');
     }
   };
 
@@ -73,13 +99,21 @@ const BookDetails = () => {
           <p><strong>Publisher:</strong> {book.publisher}</p>
           <p><strong>Year:</strong> {book.publicationYear}</p>
           <p><strong>Language:</strong> {book.language}</p>
-          <button
-            className="btn btn-primary btn-lg d-flex align-items-center gap-2"
-            onClick={() => addToCart(book.bookid)}
-            disabled={book.quantity <= 0}
-          >
-            <FaCartPlus /> {book.quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
-          </button>
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-primary btn-lg d-flex align-items-center gap-2"
+              onClick={() => addToCart(book.bookid)}
+              disabled={book.quantity <= 0}
+            >
+              <FaCartPlus /> {book.quantity > 0 ? 'Add to Cart' : 'Out of Stock'}
+            </button>
+            <button
+              className={`btn btn-lg ${inWishlist ? 'btn-danger' : 'btn-outline-danger'}`}
+              onClick={handleWishlistClick}
+            >
+              <FaHeart />
+            </button>
+          </div>
         </div>
       </div>
 
