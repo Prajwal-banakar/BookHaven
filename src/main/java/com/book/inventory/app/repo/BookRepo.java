@@ -6,7 +6,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BookRepo extends MongoRepository<Book, String> {
+public interface BookRepo extends MongoRepository<Book, String>, BookRepositoryCustom {
     Book findByBookid(String bookid);
     List<Book> findByTitleContainingIgnoreCase(String title);
+    List<Book> findByAuthorContainingIgnoreCase(String author);
+    List<Book> findByPublicationYearBetween(String startYear, String endYear);
+    List<Book> findByPriceBetween(double minPrice, double maxPrice);
 }

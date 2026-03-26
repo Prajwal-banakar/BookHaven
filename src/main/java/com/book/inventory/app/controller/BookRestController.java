@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/books")
@@ -31,8 +32,15 @@ public class BookRestController {
     }
 
     @GetMapping("/search")
-    public List<Book> searchBooks(@RequestParam String title) {
-        return repo.findByTitleContainingIgnoreCase(title);
+    public List<Book> searchBooks(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) String startYear,
+            @RequestParam(required = false) String endYear,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice
+    ) {
+        return repo.findBooksByCriteria(title, author, startYear, endYear, minPrice, maxPrice);
     }
 
     @PostMapping

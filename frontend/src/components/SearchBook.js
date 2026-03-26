@@ -7,6 +7,11 @@ import { useSearchParams } from 'react-router-dom';
 const SearchBook = () => {
   const [searchParams] = useSearchParams();
   const [title, setTitle] = useState(searchParams.get('q') || '');
+  const [author, setAuthor] = useState('');
+  const [startYear, setStartYear] = useState('');
+  const [endYear, setEndYear] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
   const [books, setBooks] = useState([]);
   const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
@@ -15,15 +20,13 @@ const SearchBook = () => {
     const query = searchParams.get('q');
     if (query) {
       setTitle(query);
-      performSearch(query);
+      performSearch({ title: query });
     }
   }, [searchParams]);
 
-  const performSearch = async (searchTitle) => {
-    if (!searchTitle.trim()) return;
-
+  const performSearch = async (searchParams) => {
     try {
-      const response = await axios.get(`/api/books/search?title=${searchTitle}`);
+      const response = await axios.get('/api/books/search', { params: searchParams });
       setBooks(response.data);
       setSearched(true);
       setError('');
@@ -35,7 +38,7 @@ const SearchBook = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    performSearch(title);
+    performSearch({ title, author, startYear, endYear, minPrice, maxPrice });
   };
 
   return (
@@ -47,24 +50,72 @@ const SearchBook = () => {
       <div className="card mb-4 shadow-sm border-0">
         <div className="card-header bg-white p-4 border-0">
           <h3 className="fw-bold" style={{color: '#4e54c8'}}>Search Book</h3>
-          <p className="text-muted">Find books by their title</p>
+          <p className="text-muted">Find books by their title, author, publication year, or price</p>
         </div>
         <div className="card-body p-4 pt-0">
-          <form onSubmit={handleSearch} className="d-flex gap-2">
-            <div className="input-group input-group-lg">
+          <form onSubmit={handleSearch}>
+            <div className="input-group mb-3">
               <span className="input-group-text bg-light border-end-0">
                 <FaSearch className="text-muted" />
               </span>
               <input
                 type="text"
                 className="form-control bg-light border-start-0"
-                placeholder="Enter Book Title (e.g., Harry Potter)"
+                placeholder="Enter Book Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                required
               />
-              <button type="submit" className="btn btn-primary px-4 fw-bold">Search</button>
             </div>
+            <div className="input-group mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Author"
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+              />
+            </div>
+            <div className="row mb-3">
+              <div className="col">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Start Year"
+                  value={startYear}
+                  onChange={(e) => setStartYear(e.target.value)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="End Year"
+                  value={endYear}
+                  onChange={(e) => setEndYear(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="row mb-3">
+              <div className="col">
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="Min Price"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                />
+              </div>
+              <div className="col">
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="Max Price"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                />
+              </div>
+            </div>
+            <button type="submit" className="btn btn-primary px-4 fw-bold">Search</button>
           </form>
         </div>
       </div>
@@ -72,7 +123,7 @@ const SearchBook = () => {
       {error && <div className="alert alert-danger">{error}</div>}
 
       {searched && books.length === 0 && !error && (
-        <div className="alert alert-info text-center">No books found matching "{title}"</div>
+        <div className="alert alert-info text-center">No books found</div>
       )}
 
       <div className="row g-4">
