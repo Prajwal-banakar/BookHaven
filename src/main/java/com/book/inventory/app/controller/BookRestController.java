@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +30,16 @@ public class BookRestController {
             return ResponseEntity.ok(book);
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/recommendations/{bookId}")
+    public ResponseEntity<List<Book>> getRecommendations(@PathVariable String bookId) {
+        Book book = repo.findByBookid(bookId);
+        if (book != null) {
+            List<Book> recommendations = repo.findByAuthorAndBookidNot(book.getAuthor(), bookId);
+            return ResponseEntity.ok(recommendations);
+        }
+        return ResponseEntity.ok(Collections.emptyList());
     }
 
     @GetMapping("/search")

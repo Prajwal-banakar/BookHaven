@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaStar, FaRegStar, FaUserCircle, FaCartPlus, FaBook, FaHeart } from 'react-icons/fa';
 import { useCart } from '../context/CartContext';
+import FeaturedBooks from './FeaturedBooks';
 
 const StarRating = ({ rating }) => {
   const stars = [];
@@ -17,6 +18,7 @@ const BookDetails = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
   const [inWishlist, setInWishlist] = useState(false);
   const { addToCart } = useCart();
@@ -24,6 +26,7 @@ const BookDetails = () => {
   useEffect(() => {
     fetchBookAndReviews();
     checkWishlist();
+    fetchRecommendations();
   }, [id]);
 
   const fetchBookAndReviews = async () => {
@@ -36,6 +39,15 @@ const BookDetails = () => {
       setReviews(reviewsRes.data);
     } catch (error) {
       console.error('Failed to fetch data', error);
+    }
+  };
+
+  const fetchRecommendations = async () => {
+    try {
+      const response = await axios.get(`/api/books/recommendations/${id}`);
+      setRecommendations(response.data);
+    } catch (error) {
+      console.error('Failed to fetch recommendations', error);
     }
   };
 
@@ -116,6 +128,13 @@ const BookDetails = () => {
           </div>
         </div>
       </div>
+
+      <hr className="my-5" />
+
+      {/* Recommendations Section */}
+      {recommendations.length > 0 && (
+        <FeaturedBooks title="You Might Also Like" books={recommendations} />
+      )}
 
       <hr className="my-5" />
 

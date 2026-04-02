@@ -100,6 +100,18 @@ public class BookRestControllerTest {
 
     @Test
     @WithMockUser(username = "user", roles = {"USER"})
+    void testGetRecommendations() throws Exception {
+        Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book1);
+        Mockito.when(bookRepo.findByAuthorAndBookidNot("John Doe", "B001")).thenReturn(Collections.singletonList(book3));
+
+        mockMvc.perform(get("/api/books/recommendations/B001"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(1))
+                .andExpect(jsonPath("$[0].title").value("Advanced Java"));
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"USER"})
     void testSearchBooksByTitle() throws Exception {
         Mockito.when(bookRepo.findBooksByCriteria(eq("Java"), eq(null), eq(null), eq(null), eq(null), eq(null)))
                 .thenReturn(Arrays.asList(book1, book3));

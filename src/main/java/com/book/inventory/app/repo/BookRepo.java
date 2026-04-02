@@ -12,4 +12,5 @@ public interface BookRepo extends MongoRepository<Book, String>, BookRepositoryC
     List<Book> findByAuthorContainingIgnoreCase(String author);
     List<Book> findByPublicationYearBetween(String startYear, String endYear);
     List<Book> findByPriceBetween(double minPrice, double maxPrice);
+    List<Book> findByAuthorAndBookidNot(String author, String bookid);
 }

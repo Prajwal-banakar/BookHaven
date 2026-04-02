@@ -13,10 +13,12 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [newArrivals, setNewArrivals] = useState([]);
   const [topRated, setTopRated] = useState([]);
+  const [recommended, setRecommended] = useState([]);
   const [showContact, setShowContact] = useState(false);
 
   useEffect(() => {
     fetchFeaturedBooks();
+    fetchRecommendedBooks();
   }, []);
 
   const fetchFeaturedBooks = async () => {
@@ -35,6 +37,15 @@ const Home = () => {
       setTopRated(sortedByRating.slice(0, 8)); // Get top 8 top rated
     } catch (error) {
       console.error('Error fetching featured books:', error);
+    }
+  };
+
+  const fetchRecommendedBooks = async () => {
+    try {
+      const response = await axios.get('/api/recommendations/popular');
+      setRecommended(response.data);
+    } catch (error) {
+      console.error('Error fetching recommended books:', error);
     }
   };
 
@@ -89,6 +100,9 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Recommended Books Section */}
+      <FeaturedBooks title="Recommended for You" books={recommended} />
+
       {/* New Arrivals Section */}
       <FeaturedBooks title="New Arrivals" books={newArrivals} />
 
@@ -122,7 +136,7 @@ const Home = () => {
           className="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
           style={{
             position: 'fixed',
-            bottom: '30px',
+            bottom: '30_px',
             right: '30px',
             width: '60px',
             height: '60px',
