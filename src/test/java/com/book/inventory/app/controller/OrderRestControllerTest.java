@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -99,31 +100,6 @@ public class OrderRestControllerTest {
 
     @Test
     @WithMockUser(username = "user")
-    void testCheckout_OutOfStock() throws Exception {
-        Cart cart = new Cart();
-        cart.setUsername("user");
-        CartItem item = new CartItem();
-        item.setBookId("B001");
-        item.setQuantity(1);
-        cart.setItems(new ArrayList<>(Collections.singletonList(item)));
-
-        Book book = new Book();
-        book.setBookid("B001");
-        book.setQuantity("0"); // Out of stock
-
-        Mockito.when(cartRepo.findByUsername("user")).thenReturn(cart);
-        // This test doesn't need to mock bookRepo because the logic is in the controller
-        // But the controller needs it.
-        // The error is in the checkout method, which doesn't deduct stock anymore.
-        // The stock check is now in updateStatus. Let's re-evaluate this test.
-        // The checkout should succeed even if stock is 0, because stock is checked on APPROVAL.
-        
-        // Let's test the original intent: stock check on approval.
-        // This test is now invalid for checkout. I will remove it and add it to updateStatus.
-    }
-
-    @Test
-    @WithMockUser(username = "user")
     void testGetMyOrders() throws Exception {
         Order order = new Order();
         order.setUsername("user");
@@ -156,7 +132,8 @@ public class OrderRestControllerTest {
         Mockito.when(notificationRepo.save(any(Notification.class))).thenReturn(new Notification());
 
         mockMvc.perform(put("/api/orders/123456789012345678901234/status")
-                .param("status", "APPROVED"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(Map.of("status", "APPROVED"))))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Status updated"));
         
@@ -183,7 +160,8 @@ public class OrderRestControllerTest {
         Mockito.when(bookRepo.findByBookid("B001")).thenReturn(book);
 
         mockMvc.perform(put("/api/orders/123456789012345678901234/status")
-                .param("status", "APPROVED"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(Map.of("status", "APPROVED"))))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Not enough stock")));
     }
