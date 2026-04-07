@@ -6,7 +6,8 @@ BookHaven is a comprehensive, full-stack e-commerce application designed for buy
 
 ### For Customers
 *   **Enhanced Home Page**: A professional, engaging layout featuring a hero section, "New Arrivals" and "Top Rated Books" carousels, and a "Browse by Genre" section.
-frontend*   **Book Recommendations**: A "You Might Also Like" section on the book details page, suggesting other books by the same author.
+*   **Book Cover Images**: Book cover images are displayed throughout the application, providing a more visual and engaging experience.
+*   **Book Recommendations**: A "You Might Also Like" section on the book details page, suggesting other books by the same author.
 *   **Browse Store**: Explore a vast catalog of books with a modern, responsive grid layout.
 *   **Advanced Search**: Find books by title, author, publication year range, and price range.
 *   **Wishlist/Favorites**: Add books to a personal wishlist to save for later.
@@ -18,12 +19,12 @@ frontend*   **Book Recommendations**: A "You Might Also Like" section on the boo
 *   **User Profile**: Manage personal details (Name, Email, Address) with an easy-to-use edit interface.
 
 ### For Administrators
-*   **Admin Dashboard**: A centralized hub to view and manage all customer orders.
+*   **Comprehensive Admin Dashboard**: A unified dashboard with key stats (total books, users, orders), recent order management, and a searchable, paginated inventory management table.
 *   **Order Fulfillment**: Approve, Deliver, or Cancel orders. Stock is automatically deducted upon approval.
 *   **Customer Insights**: Click on any username in the order list to view their full contact details and shipping address.
 *   **Admin Notifications**: Receive alerts whenever a new order is placed.
 *   **Live Chat Interface**: A dedicated page to view all user chats and respond in real-time.
-*   **Inventory Management**: Add new books, update pricing/stock, and remove outdated items.
+*   **Inventory Management**: Add new books, update pricing/stock, and remove outdated items, including book cover image URLs.
 *   **Customer Messages**: View inquiries sent by users through the contact form.
 *   **Role-Based Access**: Strict security ensuring only admins can access sensitive features.
 
@@ -90,7 +91,7 @@ frontend*   **Book Recommendations**: A "You Might Also Like" section on the boo
 ## 📂 Project Structure
 
 *   `src/main/java`: Spring Boot Backend
-    *   `controller`: REST & WebSocket Controllers (`BookRestController`, `OrderRestController`, `AuthRestController`, `CartRestController`, `NotificationRestController`, `ChatController`)
+    *   `controller`: REST & WebSocket Controllers (`BookRestController`, `OrderRestController`, `AuthRestController`, `CartRestController`, `NotificationRestController`, `ChatController`, `UserRestController`)
     *   `domain`: Data Models (`Book`, `User`, `Order`, `Cart`, `Notification`, `ChatMessage`)
     *   `repo`: MongoDB Repositories
     *   `config`: Security & WebSocket Configuration

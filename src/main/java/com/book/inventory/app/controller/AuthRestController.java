@@ -77,15 +77,4 @@ public class AuthRestController {
         }
         return ResponseEntity.notFound().build();
     }
-
-    // Admin: Get user details by username
-    @GetMapping("/api/users/{username}")
-    public ResponseEntity<?> getUserByUsername(@PathVariable String username) {
-        User user = userRepo.findByUsername(username);
-        if (user != null) {
-            user.setPassword(null);
-            return ResponseEntity.ok(user);
-        }
-        return ResponseEntity.notFound().build();
-    }
 }
