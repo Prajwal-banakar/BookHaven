@@ -8,6 +8,7 @@ BookHaven is a comprehensive, full-stack e-commerce application designed for buy
 *   **Enhanced Home Page**: A professional, engaging layout featuring a hero section, "New Arrivals" and "Top Rated Books" carousels, and a "Browse by Genre" section.
 *   **Book Cover Images**: Book cover images are displayed throughout the application, providing a more visual and engaging experience.
 *   **Book Recommendations**: A "You Might Also Like" section on the book details page, suggesting other books by the same author.
+*   **Enhanced User Profile**: A redesigned profile page that includes a "My Reviews" section and a "My Wishlist" preview, in addition to editable user information.
 *   **Browse Store**: Explore a vast catalog of books with a modern, responsive grid layout.
 *   **Advanced Search**: Find books by title, author, publication year range, and price range.
 *   **Wishlist/Favorites**: Add books to a personal wishlist to save for later.
@@ -16,7 +17,6 @@ BookHaven is a comprehensive, full-stack e-commerce application designed for buy
 *   **Order Tracking**: View order history and track the status of your purchases (Pending, Approved, Delivered).
 *   **Real-time Notifications**: Receive instant alerts when your order status changes.
 *   **Live Chat**: Communicate directly with administrators in real-time for support via a floating chat widget.
-*   **User Profile**: Manage personal details (Name, Email, Address) with an easy-to-use edit interface.
 
 ### For Administrators
 *   **Comprehensive Admin Dashboard**: A unified dashboard with key stats (total books, users, orders), recent order management, and a searchable, paginated inventory management table.
@@ -91,12 +91,12 @@ BookHaven is a comprehensive, full-stack e-commerce application designed for buy
 ## 📂 Project Structure
 
 *   `src/main/java`: Spring Boot Backend
-    *   `controller`: REST & WebSocket Controllers (`BookRestController`, `OrderRestController`, `AuthRestController`, `CartRestController`, `NotificationRestController`, `ChatController`, `UserRestController`)
-    *   `domain`: Data Models (`Book`, `User`, `Order`, `Cart`, `Notification`, `ChatMessage`)
+    *   `controller`: REST & WebSocket Controllers (`BookRestController`, `OrderRestController`, `AuthRestController`, `CartRestController`, `NotificationRestController`, `ChatController`, `UserRestController`, `ReviewRestController`)
+    *   `domain`: Data Models (`Book`, `User`, `Order`, `Cart`, `Notification`, `ChatMessage`, `Review`)
     *   `repo`: MongoDB Repositories
     *   `config`: Security & WebSocket Configuration
 *   `frontend`: React Frontend
-    *   `src/components`: UI Components (`Home`, `BookList`, `Cart`, `Checkout`, `AdminDashboard`, `NotificationDropdown`, `ChatWidget`, `AdminChat`)
+    *   `src/components`: UI Components (`Home`, `BookList`, `Cart`, `Checkout`, `AdminDashboard`, `NotificationDropdown`, `ChatWidget`, `AdminChat`, `Profile`, `UserReviews`, `WishlistPreview`)
     *   `src/context`: State Management (`AuthContext`, `CartContext`)
     *   `public`: Static Assets
 

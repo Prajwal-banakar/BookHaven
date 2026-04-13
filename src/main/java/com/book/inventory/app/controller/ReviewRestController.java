@@ -28,6 +28,11 @@ public class ReviewRestController {
         return reviewRepo.findByBookId(bookId);
     }
 
+    @GetMapping("/user/{username}")
+    public List<Review> getReviewsByUser(@PathVariable String username) {
+        return reviewRepo.findByUsername(username);
+    }
+
     @PostMapping
     public ResponseEntity<?> addReview(@RequestBody Review review) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
